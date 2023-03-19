@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Health Fitness</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="remaining">Remaining</string>
+    <string name="eat_at">Eat at</string>
+    <string name="duration">Your sleep duration is %1$s</string>
+    <string name="set_your_fast_time_window">Set your fast time window</string>
+    <string name="durations">Set your Fast/Feed level</string>
+    <string name="eating_period">Eating period</string>
+    <string name="breakfast">Starts at</string>
+    <string name="fast">Ends at</string>
+    <string name="extreme">🥵</string>
+    <string name="moderate">🤗</string>
+    <string name="title_home">Home</string>
+    <string name="title_settings">Settings</string>
+
+    <string name="personal_plan">Personal Plan</string>
+</resources>

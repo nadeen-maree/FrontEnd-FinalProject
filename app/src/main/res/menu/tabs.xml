@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<!--    <item-->
+<!--        android:id="@+id/tab_home"-->
+<!--        android:icon="@drawable/i"-->
+<!--        android:title="@string/personal_plan" />-->
+<!--    <item-->
+<!--        android:id="@+id/tab_alarm"-->
+<!--        android:icon="@drawable/alarm"-->
+<!--        android:title="@string/alarm" />-->
+<!--    <item-->
+<!--        android:id="@+id/tab_bread"-->
+<!--        android:icon="@drawable/bread"-->
+<!--        android:title="@string/bread" />-->
+<!--    <item-->
+<!--        android:id="@+id/tab_cart"-->
+<!--        android:icon="@drawable/cart"-->
+<!--        android:title="@string/cart" />-->
+</menu>
