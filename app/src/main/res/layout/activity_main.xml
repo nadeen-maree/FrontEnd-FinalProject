@@ -18,7 +18,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout5"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -26,7 +26,7 @@
             <ImageView
                 android:id="@+id/main_top"
                 android:layout_width="0dp"
-                android:layout_height="200dp"
+                android:layout_height="100dp"
                 app:layout_constraintBottom_toBottomOf="@+id/main_txt"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
@@ -35,42 +35,32 @@
                 app:layout_constraintVertical_bias="0.0"
                 app:srcCompat="@drawable/top_background" />
 
-            <ImageView
-                android:id="@+id/logo_top"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_marginTop="36dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/logo_circle_white" />
-
             <TextView
                 android:id="@+id/main_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:text="Personal Program"
                 android:textColor="#ffffff"
                 android:textSize="30sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/logo_top"
-                app:layout_constraintStart_toStartOf="@+id/logo_top"
-                app:layout_constraintTop_toBottomOf="@+id/logo_top" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/main_top"
+                app:layout_constraintStart_toStartOf="@+id/main_top"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout3"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="175dp"
             android:orientation="horizontal"
             android:padding="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
+            app:layout_constraintTop_toTopOf="@+id/guideline">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
@@ -91,7 +81,7 @@
                         android:layout_marginTop="10dp"
                         android:fontFamily="sans-serif"
                         android:text="Fasting"
-                        android:textSize="24sp" />
+                        android:textSize="24sp"/>
 
                     <ImageView
                         android:id="@+id/fasting"
@@ -99,7 +89,7 @@
                         android:layout_height="75dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="15dp"
-                        tools:srcCompat="@tools:sample/avatars" />
+                        android:src="@drawable/intermittent"/>
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -117,7 +107,7 @@
                         android:id="@+id/training_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/trainig"
+                        android:layout_below="@id/training"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
                         android:fontFamily="sans-serif"
@@ -125,26 +115,27 @@
                         android:textSize="24sp" />
 
                     <ImageView
-                        android:id="@+id/trainig"
+                        android:id="@+id/training"
                         android:layout_width="75dp"
                         android:layout_height="75dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="15dp"
-                        tools:srcCompat="@tools:sample/avatars" />
+                        android:src="@drawable/training" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout4"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="175dp"
             android:orientation="horizontal"
             android:padding="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
+            app:layout_constraintTop_toTopOf="@+id/guideline2">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
@@ -173,7 +164,7 @@
                         android:layout_height="75dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="15dp"
-                        tools:srcCompat="@tools:sample/avatars" />
+                        android:src="@drawable/add" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -204,22 +195,22 @@
                         android:layout_height="75dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="15dp"
-                        tools:srcCompat="@tools:sample/avatars" />
+                        android:src="@drawable/daily_water" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linear3"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="175dp"
-            android:layout_marginTop="9dp"
             android:orientation="horizontal"
             android:padding="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout4">
+            app:layout_constraintTop_toTopOf="@+id/guideline3">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="0dp"
@@ -248,7 +239,7 @@
                         android:layout_height="75dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="15dp"
-                        tools:srcCompat="@tools:sample/avatars" />
+                        android:src="@drawable/walk" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -270,7 +261,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="10dp"
                         android:fontFamily="sans-serif"
-                        android:text="Water Tracking"
+                        android:text="Profile"
                         android:textSize="24sp" />
 
                     <ImageView
@@ -279,7 +270,7 @@
                         android:layout_height="75dp"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="15dp"
-                        tools:srcCompat="@tools:sample/avatars" />
+                        android:src="@drawable/user" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
@@ -292,12 +283,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linear3"
+            app:layout_constraintTop_toTopOf="@+id/guideline4"
             app:layout_constraintVertical_bias="1.0">
 
             <com.google.android.material.bottomappbar.BottomAppBar
                 android:id="@+id/app_bar"
-                android:layout_width="401dp"
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_gravity="bottom"
                 android:backgroundTint="@color/green"
@@ -439,6 +430,7 @@
             </com.google.android.material.bottomappbar.BottomAppBar>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/training_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/blue"
@@ -449,6 +441,31 @@
                 app:tint="#ffffff" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.15" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.375" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.625" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.875" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

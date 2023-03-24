@@ -55,5 +55,5 @@ dependencies {
     implementation 'nl.joery.timerangepicker:timerangepicker:1.0.0'
     implementation 'nl.joery.animatedbottombar:library:1.1.0'
 
-
+    implementation 'com.zekapp.library:progreswheelview:1.1.5'
 }

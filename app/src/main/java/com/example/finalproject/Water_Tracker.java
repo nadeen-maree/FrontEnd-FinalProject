@@ -5,32 +5,29 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class TrainingActivity extends AppCompatActivity {
+public class Water_Tracker extends AppCompatActivity {
     TextView personal_plan, food, challenges, user_profile;
     FloatingActionButton exe;
-    ImageView exe1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_training);
+        setContentView(R.layout.activity_water_tracker);
 
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
         challenges = findViewById(R.id.tab4_txt);
         user_profile = findViewById(R.id.tab5_txt);
         exe = findViewById(R.id.training_btn);
-        exe1 = findViewById(R.id.exe1);
 
         personal_plan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(TrainingActivity.this, MainActivity.class);
+                Intent intent= new Intent(Water_Tracker.this, MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -38,7 +35,7 @@ public class TrainingActivity extends AppCompatActivity {
         food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(TrainingActivity.this, Food.class);
+                Intent intent= new Intent(Water_Tracker.this, Food.class);
                 startActivity(intent);
             }
         });
@@ -46,7 +43,7 @@ public class TrainingActivity extends AppCompatActivity {
         challenges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(TrainingActivity.this, Challenges.class);
+                Intent intent= new Intent(Water_Tracker.this, Challenges.class);
                 startActivity(intent);
             }
         });
@@ -54,15 +51,7 @@ public class TrainingActivity extends AppCompatActivity {
         exe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(TrainingActivity.this, TrainingActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        exe1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent= new Intent(TrainingActivity.this, Specific_Exe.class);
+                Intent intent= new Intent(Water_Tracker.this, TrainingActivity.class);
                 startActivity(intent);
             }
         });
