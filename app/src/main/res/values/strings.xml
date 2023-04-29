@@ -21,4 +21,26 @@
     <string name="drink">Drink</string>
 
     <string name="personal_plan">Personal Plan</string>
+
+    <string name="birth_of_date_button_description">Select Birth of Date</string>
+    <string name="height_label_text">Height (cm)</string>
+    <string name="height_hint">Height (cm)</string>
+    <string name="picker_button_text">OK</string>
+
+
+    <string-array name="focus_zones_array">
+        <item>Chest</item>
+        <item>Back</item>
+        <item>Legs</item>
+        <item>Arms</item>
+        <item>Abs</item>
+    </string-array>
+
+    <string name="main_goal_prompt">Select your main goal</string>
+    <array name="main_goal_array">
+        <item>Build Muscle</item>
+        <item>Lose Weight</item>
+        <item>Maintain Weight</item>
+        <item>Improve Fitness</item>
+    </array>
 </resources>

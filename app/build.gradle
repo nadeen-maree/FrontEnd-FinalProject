@@ -56,4 +56,13 @@ dependencies {
     implementation 'nl.joery.animatedbottombar:library:1.1.0'
 
     implementation 'com.zekapp.library:progreswheelview:1.1.5'
+
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    implementation 'com.appyvet:materialrangebar:1.4.3'
+
+    implementation 'com.xw.repo:bubbleseekbar:3.20-lite'
+
+    implementation 'com.github.florent37:singledateandtimepicker:2.2.7'
+
 }

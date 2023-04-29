@@ -53,9 +53,4 @@ public class LoginTabFragment extends Fragment {
 
         return root;
     }
-
-
-
-
-
 }

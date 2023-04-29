@@ -50,6 +50,14 @@ public class SignupTabFragment extends Fragment {
         signup.animate().translationX(0).alpha(1).setDuration(800).setStartDelay(700).start();
 
 
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), QuestionnaireActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return root;
     }
 }
