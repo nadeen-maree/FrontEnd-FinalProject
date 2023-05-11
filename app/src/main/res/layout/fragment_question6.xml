@@ -7,11 +7,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/user_physical_limitation_textView"
+        android:id="@+id/user_focus_zones_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="228dp"
-        android:text="Do You Have Physical Limitations?"
+        android:text="What's Your Focus Zones?"
         android:textSize="36sp"
         android:textStyle="bold"
         android:textAlignment="center"
@@ -25,54 +25,54 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_vertical"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_physical_limitation_textView"
+        app:layout_constraintTop_toBottomOf="@+id/user_focus_zones_textView"
         app:layout_constraintVertical_bias="0.1">
 
         <CheckBox
-            android:id="@+id/none_checkbox"
+            android:id="@+id/chest_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="None"
+            android:text="Chest"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"/>
 
         <CheckBox
-            android:id="@+id/knee_pain_checkbox"
+            android:id="@+id/back_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Knee Pain"
+            android:text="Back"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"/>
 
         <CheckBox
-            android:id="@+id/back_pain_checkbox"
+            android:id="@+id/arms_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Back Pain"
+            android:text="Arms"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"/>
 
         <CheckBox
-            android:id="@+id/limited_mobility_checkbox"
+            android:id="@+id/legs_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Limited Mobility\n(Wheelchair)"
+            android:text="Legs"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"/>
 
         <CheckBox
-            android:id="@+id/other_checkbox"
+            android:id="@+id/abs_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Other"
+            android:text="Abs"
             android:textSize="24sp"
             android:textStyle="bold"/>
 

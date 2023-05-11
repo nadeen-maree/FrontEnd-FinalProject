@@ -13,8 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,7 +23,8 @@ import java.util.List;
 
 public class Question6Fragment extends Fragment {
 
-    CheckBox noneCheckbox, kneePainCheckbox, backPainCheckbox, limitedMobilityCheckbox, OtherCheckbox;
+
+    CheckBox chestCheckbox, backCheckbox, armsCheckbox, legsCheckbox, absCheckbox;
     private FloatingActionButton nextButton6;
 
     public Question6Fragment() {
@@ -38,127 +37,60 @@ public class Question6Fragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question6, container, false);
 
-        noneCheckbox = view.findViewById(R.id.none_checkbox);
-        kneePainCheckbox = view.findViewById(R.id.knee_pain_checkbox);
-        backPainCheckbox = view.findViewById(R.id.back_pain_checkbox);
-        limitedMobilityCheckbox = view.findViewById(R.id.limited_mobility_checkbox);
-        OtherCheckbox = view.findViewById(R.id.other_checkbox);
+        chestCheckbox = view.findViewById(R.id.chest_checkbox);
+        backCheckbox = view.findViewById(R.id.back_checkbox);
+        armsCheckbox = view.findViewById(R.id.arms_checkbox);
+        legsCheckbox = view.findViewById(R.id.legs_checkbox);
+        absCheckbox = view.findViewById(R.id.abs_checkbox);
         nextButton6 = view.findViewById(R.id.next6_button);
-
-        // Add OnCheckedChangeListener to each CheckBox
-        noneCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // If "noneCheckbox" is checked, uncheck all other checkboxes
-                if (isChecked) {
-                    kneePainCheckbox.setChecked(false);
-                    backPainCheckbox.setChecked(false);
-                    limitedMobilityCheckbox.setChecked(false);
-                    OtherCheckbox.setChecked(false);
-                }
-            }
-        });
-
-        kneePainCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // If any of the other checkboxes are checked, uncheck "noneCheckbox"
-                if (isChecked) {
-                    noneCheckbox.setChecked(false);
-                }
-            }
-        });
-
-        backPainCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // If any of the other checkboxes are checked, uncheck "noneCheckbox"
-                if (isChecked) {
-                    noneCheckbox.setChecked(false);
-                }
-            }
-        });
-
-        limitedMobilityCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // If any of the other checkboxes are checked, uncheck "noneCheckbox"
-                if (isChecked) {
-                    noneCheckbox.setChecked(false);
-                }
-            }
-        });
-
-        OtherCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // If any of the other checkboxes are checked, uncheck "noneCheckbox"
-                if (isChecked) {
-                    noneCheckbox.setChecked(false);
-                }
-            }
-        });
 
         nextButton6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Get the checked state of each checkbox
-                boolean noneChecked = noneCheckbox.isChecked();
-                boolean kneePainChecked = kneePainCheckbox.isChecked();
-                boolean backPainChecked = backPainCheckbox.isChecked();
-                boolean limitedMobilityChecked = limitedMobilityCheckbox.isChecked();
-                boolean OtherChecked = OtherCheckbox.isChecked();
+                boolean chestChecked = chestCheckbox.isChecked();
+                boolean backChecked = backCheckbox.isChecked();
+                boolean armsChecked = armsCheckbox.isChecked();
+                boolean legsChecked = legsCheckbox.isChecked();
+                boolean absChecked = absCheckbox.isChecked();
 
                 // Check if at least one checkbox is checked
-                if (!noneChecked && !kneePainChecked && !backPainChecked && !limitedMobilityChecked && !OtherChecked) {
+                if (!chestChecked && !backChecked && !armsChecked && !legsChecked && !absChecked) {
                     // Display an error message
-                    Toast.makeText(getActivity(), "Please select at least one physical limitations or none option", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please select at least one focus zone", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 // Create a list to store the selected focus zones
-                List<String> selectedPhysicalLimitations = new ArrayList<>();
+                List<String> selectedFocusZones = new ArrayList<>();
 
                 // Check each checkbox and add its label to the list if it's checked
-                if (noneChecked) {
-                    selectedPhysicalLimitations.add(noneCheckbox.getText().toString());
+                if (chestChecked) {
+                    selectedFocusZones.add(chestCheckbox.getText().toString());
                 }
-                if (kneePainChecked) {
-                    selectedPhysicalLimitations.add(kneePainCheckbox.getText().toString());
+                if (backChecked) {
+                    selectedFocusZones.add(backCheckbox.getText().toString());
                 }
-                if (backPainChecked) {
-                    selectedPhysicalLimitations.add(backPainCheckbox.getText().toString());
+                if (armsChecked) {
+                    selectedFocusZones.add(armsCheckbox.getText().toString());
                 }
-                if (limitedMobilityChecked) {
-                    selectedPhysicalLimitations.add(limitedMobilityCheckbox.getText().toString());
+                if (legsChecked) {
+                    selectedFocusZones.add(legsCheckbox.getText().toString());
                 }
-                if (OtherChecked) {
-                    selectedPhysicalLimitations.add(OtherCheckbox.getText().toString());
-                }
-
-                // Check if the "none" checkbox is checked and uncheck all other checkboxes if it is
-                if (noneChecked) {
-                    kneePainCheckbox.setChecked(false);
-                    backPainCheckbox.setChecked(false);
-                    limitedMobilityCheckbox.setChecked(false);
-                    OtherCheckbox.setChecked(false);
-                } else {
-                    // Check if any other checkbox is checked and uncheck the "none" checkbox if it is
-                    if (kneePainChecked || backPainChecked || limitedMobilityChecked || OtherChecked) {
-                        noneCheckbox.setChecked(false);
-                    }
+                if (absChecked) {
+                    selectedFocusZones.add(absCheckbox.getText().toString());
                 }
 
-                // Create a string from the list of selected physical limitations
-                String selectedPhysicalLimitationsString = TextUtils.join(", ", selectedPhysicalLimitations);
+                // Create a string from the list of selected focus zones
+                String selectedFocusZonesString = TextUtils.join(", ", selectedFocusZones);
 
                 SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
-                editor.putString("physicalLimitations", selectedPhysicalLimitationsString);
+                editor.putString("FocusZones", selectedFocusZonesString);
                 editor.apply();
 
-                // Create a bundle and add the selected physical limitations to it
+                // Create a bundle and add the selected focus zones to it
                 Bundle bundle = new Bundle();
-                bundle.putString("selected_physical_limitations", selectedPhysicalLimitationsString);
+                bundle.putString("selected_focus_zones", selectedFocusZonesString);
 
                 // Create a new instance of the next fragment and set its arguments
                 Question7Fragment question7Fragment = new Question7Fragment();

@@ -371,6 +371,73 @@
 
             </LinearLayout>
 
+            <!-- Diet Type -->
+            <TextView
+                android:id="@+id/diet_type_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Diet Type"
+                android:layout_marginBottom="8dp"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/diet_type_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edit_text_rounded_background"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="showDietTypeOptions"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="10dp"
+                android:paddingStart="5dp"
+                android:text="Select Diet Type"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:id="@+id/diet_type_picker_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <RadioGroup
+                    android:id="@+id/diet_type_radio_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <RadioButton
+                        android:id="@+id/traditional_radio_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Traditional" />
+
+                    <RadioButton
+                        android:id="@+id/vegetarian_radio_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Vegetarian" />
+
+                    <RadioButton
+                        android:id="@+id/keto_radio_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Keto" />
+                </RadioGroup>
+
+                <Button
+                    android:id="@+id/diet_type_ok_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="16dp"
+                    android:onClick="onGenderOkButtonClick"
+                    android:text="OK" />
+
+            </LinearLayout>
+
             <!-- Fitness Level -->
             <TextView
                 android:id="@+id/fitness_level_label"

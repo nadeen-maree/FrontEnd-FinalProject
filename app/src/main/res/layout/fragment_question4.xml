@@ -7,11 +7,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/user_fitness_level_textView"
+        android:id="@+id/user_gender_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="228dp"
-        android:text="What's Your Fitness Level?"
+        android:text="What's Your Diet Type?"
         android:textSize="36sp"
         android:textStyle="bold"
         android:textAlignment="center"
@@ -21,7 +21,7 @@
 
 
     <LinearLayout
-        android:id="@+id/fitness_level_container"
+        android:id="@+id/gender_radio_group_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -29,38 +29,38 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_fitness_level_textView"
+        app:layout_constraintTop_toBottomOf="@+id/user_gender_textView"
         app:layout_constraintVertical_bias="0.1">
 
         <RadioGroup
-            android:id="@+id/fitness_level_radio_group"
+            android:id="@+id/diet_type__radio_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <RadioButton
-                android:id="@+id/beginner_radio_button"
+                android:id="@+id/traditional_radio_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Beginner"
+                android:text="Traditional"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp"/>
 
             <RadioButton
-                android:id="@+id/intermediate_radio_button"
+                android:id="@+id/vegetarian_radio_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Intermediate"
+                android:text="Vegetarian"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp"/>
 
             <RadioButton
-                android:id="@+id/advanced_radio_button"
+                android:id="@+id/keto_radio_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Advanced"
+                android:text="Keto"
                 android:textSize="24sp"
                 android:textStyle="bold"/>
         </RadioGroup>

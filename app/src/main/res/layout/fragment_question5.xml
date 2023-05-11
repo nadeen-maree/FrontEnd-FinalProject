@@ -7,11 +7,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:id="@+id/user_focus_zones_textView"
+        android:id="@+id/user_fitness_level_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="228dp"
-        android:text="What's Your Focus Zones?"
+        android:text="What's Your Fitness Level?"
         android:textSize="36sp"
         android:textStyle="bold"
         android:textAlignment="center"
@@ -21,7 +21,7 @@
 
 
     <LinearLayout
-        android:id="@+id/focus_zones_container"
+        android:id="@+id/fitness_level_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -29,53 +29,41 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_focus_zones_textView"
+        app:layout_constraintTop_toBottomOf="@+id/user_fitness_level_textView"
         app:layout_constraintVertical_bias="0.1">
 
-        <CheckBox
-            android:id="@+id/chest_checkbox"
-            android:layout_width="match_parent"
+        <RadioGroup
+            android:id="@+id/fitness_level_radio_group"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chest"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="10dp"/>
+            android:orientation="vertical">
 
-        <CheckBox
-            android:id="@+id/back_checkbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Back"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="10dp"/>
+            <RadioButton
+                android:id="@+id/beginner_radio_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Beginner"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"/>
 
-        <CheckBox
-            android:id="@+id/arms_checkbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Arms"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="10dp"/>
+            <RadioButton
+                android:id="@+id/intermediate_radio_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Intermediate"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"/>
 
-        <CheckBox
-            android:id="@+id/legs_checkbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Legs"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="10dp"/>
-
-        <CheckBox
-            android:id="@+id/abs_checkbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Abs"
-            android:textSize="24sp"
-            android:textStyle="bold"/>
-
+            <RadioButton
+                android:id="@+id/advanced_radio_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Advanced"
+                android:textSize="24sp"
+                android:textStyle="bold"/>
+        </RadioGroup>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

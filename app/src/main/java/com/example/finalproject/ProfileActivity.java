@@ -19,7 +19,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ProfileActivity extends AppCompatActivity {
 
     CircleImageView profileImage;
-    TextView profileNameTextView, profileDateTextView, profileGenderTextView,
+    TextView profileNameTextView, profileDateTextView, profileGenderTextView, profileDietTypeTextView,
             profileFitnessLevelTextView, profileFocusZonesTextView, profilePhysicalLimitationsTextView,
             profileStartingWeightTextView, profileTargetWeightTextView, profileHeightTextView;
     Button editProfileButton;
@@ -41,6 +41,7 @@ public class ProfileActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.profile_image);
         profileNameTextView = findViewById(R.id.profile_name);
         profileDateTextView = findViewById(R.id.profile_date);
+        profileDietTypeTextView = findViewById(R.id.profile_diet_type);
         profileGenderTextView = findViewById(R.id.profile_gender);
         profileFitnessLevelTextView = findViewById(R.id.profile_fitness_level);
         profileFocusZonesTextView = findViewById(R.id.profile_focus_zones);
@@ -58,6 +59,9 @@ public class ProfileActivity extends AppCompatActivity {
 
         String gender = prefs.getString("gender", "");
         profileGenderTextView.setText(gender);
+
+        String dietType = prefs.getString("dietType", "");
+        profileDietTypeTextView.setText(dietType);
 
         String fitnessLevel = prefs.getString("fitnessLevel", "");
         profileFitnessLevelTextView.setText(fitnessLevel);
@@ -106,6 +110,9 @@ public class ProfileActivity extends AppCompatActivity {
             String gender = data.getStringExtra("gender");
             prefs.edit().putString("gender", gender).apply();
 
+            String dietType = data.getStringExtra("dietType");
+            prefs.edit().putString("dietType", dietType).apply();
+
             String fitnessLevel = data.getStringExtra("fitnessLevel");
             prefs.edit().putString("fitnessLevel", fitnessLevel).apply();
 
@@ -141,6 +148,7 @@ public class ProfileActivity extends AppCompatActivity {
             profileNameTextView.setText(name);
             profileDateTextView.setText(date);
             profileGenderTextView.setText(gender);
+            profileDietTypeTextView.setText(dietType);
             profileFitnessLevelTextView.setText(fitnessLevel);
             profileFocusZonesTextView.setText(focusZones);
             profilePhysicalLimitationsTextView.setText(physicalLimitations);

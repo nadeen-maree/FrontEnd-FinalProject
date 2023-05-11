@@ -2,14 +2,11 @@ package com.example.finalproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,7 +24,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -37,14 +33,14 @@ public class Edit_Profile extends AppCompatActivity {
 
     CircleImageView profileImage;
     EditText userName;
-    TextView genderText, birthDateText, fitnessLevelText, focusZonesText, physicalLimitationsText, startingWeightText,
+    TextView genderText, birthDateText, dietTypeText, fitnessLevelText, focusZonesText, physicalLimitationsText, startingWeightText,
             targetWeightText, heightText;
-    RadioGroup genderRadioGroup, fitnessLevelRadioGroup;
-    LinearLayout genderPickerContainer, fitnessLevelPickerContainer, focusZonesContainer, physicalLimitationsCheckboxContainer, startingWeightPickerContainer,
+    RadioGroup genderRadioGroup, dietTypeRadioGroup, fitnessLevelRadioGroup;
+    LinearLayout genderPickerContainer, dietTypePickerContainer, fitnessLevelPickerContainer, focusZonesContainer, physicalLimitationsCheckboxContainer, startingWeightPickerContainer,
             targetWeightPickerContainer, heightPickerContainer;
     CheckBox chestCheckbox, backCheckbox, armsCheckbox, legsCheckbox, absCheckbox, noneCheckBox, kneePainCheckBox, backPainCheckBox, limitedMobilityCheckBox, otherCheckBox;
     NumberPicker startingWeightPicker, targetWeightPicker, heightPicker;
-    Button genderOkButton, fitnessLevelOkButton, focusZonesOkButton, physicalLimitationsOkButton,
+    Button genderOkButton, dietTypeOkButton, fitnessLevelOkButton, focusZonesOkButton, physicalLimitationsOkButton,
             startingWeightButton, targetWeightButton, heightButton, saveButton;
 
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -64,6 +60,10 @@ public class Edit_Profile extends AppCompatActivity {
         genderRadioGroup = findViewById(R.id.gender_radio_group);
         genderOkButton = findViewById(R.id.gender_ok_button);
         genderPickerContainer = findViewById(R.id.gender_picker_container);
+        dietTypeText = findViewById(R.id.diet_type_text);
+        dietTypeRadioGroup = findViewById(R.id.diet_type_radio_group);
+        dietTypeOkButton = findViewById(R.id.diet_type_ok_button);
+        dietTypePickerContainer = findViewById(R.id.diet_type_picker_container);
         fitnessLevelText = findViewById(R.id.fitness_level_text);
         fitnessLevelRadioGroup = findViewById(R.id.fitness_level_radio_group);
         fitnessLevelOkButton = findViewById(R.id.fitness_level_ok_button);
@@ -151,6 +151,23 @@ public class Edit_Profile extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 onGenderOkButtonClick(view);
+            }
+        });
+
+        // Set click listener for the genderText
+        dietTypeText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDietTypeOptions(view);
+            }
+        });
+
+
+        // Set click listener for the okButton
+        dietTypeOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onDietTypeOkButtonClick(view);
             }
         });
 
@@ -336,7 +353,7 @@ public class Edit_Profile extends AppCompatActivity {
         }
     }
 
-    // Called when the fitnessLevelEditText is clicked
+    // Called when the genderText is clicked
     public void showGenderOptions(View view) {
         // Show the radio group and OK button
         genderRadioGroup.setVisibility(View.VISIBLE);
@@ -357,7 +374,29 @@ public class Edit_Profile extends AppCompatActivity {
         genderText.setText(selectedText);
     }
 
-    // Called when the fitnessLevelEditText is clicked
+    // Called when the dietTypeText is clicked
+    public void showDietTypeOptions(View view) {
+        // Show the radio group and OK button
+        dietTypeRadioGroup.setVisibility(View.VISIBLE);
+        dietTypeOkButton.setVisibility(View.VISIBLE);
+
+        // Show the container layout
+        dietTypePickerContainer.setVisibility(View.VISIBLE);
+    }
+
+
+    public void onDietTypeOkButtonClick(View view) {
+        dietTypePickerContainer.setVisibility(View.GONE);
+
+        // Get the selected radio button text and display it in the edit text
+        int selectedId = dietTypeRadioGroup.getCheckedRadioButtonId();
+        RadioButton selectedRadioButton = findViewById(selectedId);
+        String selectedText = selectedRadioButton.getText().toString();
+        dietTypeText.setText(selectedText);
+    }
+
+
+    // Called when the fitnessLevelText is clicked
     public void showFitnessLevelOptions(View view) {
         // Show the radio group and OK button
         fitnessLevelRadioGroup.setVisibility(View.VISIBLE);
@@ -512,6 +551,7 @@ public class Edit_Profile extends AppCompatActivity {
         String name = userName.getText().toString();
         String date = birthDateText.getText().toString();
         String gender = genderText.getText().toString();
+        String dietType = dietTypeText.getText().toString();
         String fitnessLevel = fitnessLevelText.getText().toString();
         String focusZones = focusZonesText.getText().toString();
         String physicalLimitations = physicalLimitationsText.getText().toString();
@@ -526,6 +566,7 @@ public class Edit_Profile extends AppCompatActivity {
         editor.putString("name", name);
         editor.putString("date", date);
         editor.putString("gender", gender);
+        editor.putString("dietType", dietType);
         editor.putString("fitnessLevel", fitnessLevel);
         editor.putString("FocusZones", focusZones);
         editor.putString("physicalLimitations", physicalLimitations);
@@ -545,6 +586,7 @@ public class Edit_Profile extends AppCompatActivity {
         intent.putExtra("name", name);
         intent.putExtra("date", date);
         intent.putExtra("gender", gender);
+        intent.putExtra("dietType", dietType);
         intent.putExtra("fitnessLevel", fitnessLevel);
         intent.putExtra("focusZones", focusZones);
         intent.putExtra("physicalLimitations", physicalLimitations);
