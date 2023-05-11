@@ -1,6 +1,9 @@
 package com.example.finalproject;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.DatePickerDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -50,6 +53,9 @@ public class Question2Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String date = dateText.getText().toString();
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+                editor.putString("date", date);
+                editor.apply();
                 if (date.equals("dd/MM/yyyy")) {
                     Toast.makeText(getContext(), "Please select a date", Toast.LENGTH_SHORT).show();
                     return;

@@ -1,5 +1,8 @@
 package com.example.finalproject;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -148,6 +151,10 @@ public class Question6Fragment extends Fragment {
 
                 // Create a string from the list of selected physical limitations
                 String selectedPhysicalLimitationsString = TextUtils.join(", ", selectedPhysicalLimitations);
+
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+                editor.putString("physicalLimitations", selectedPhysicalLimitationsString);
+                editor.apply();
 
                 // Create a bundle and add the selected physical limitations to it
                 Bundle bundle = new Bundle();

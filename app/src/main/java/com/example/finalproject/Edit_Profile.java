@@ -2,21 +2,32 @@ package com.example.finalproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -25,18 +36,21 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Edit_Profile extends AppCompatActivity {
 
     CircleImageView profileImage;
-    TextView fitnessLevelText, focusZonesText, birthDateText, physicalLimitationsText, startingWeightText,
+    EditText userName;
+    TextView genderText, birthDateText, fitnessLevelText, focusZonesText, physicalLimitationsText, startingWeightText,
             targetWeightText, heightText;
-    RadioGroup fitnessLevelRadioGroup;
-    LinearLayout fitnessLevelPickerContainer, focusZonesContainer, physicalLimitationsCheckboxContainer, startingWeightPickerContainer,
+    RadioGroup genderRadioGroup, fitnessLevelRadioGroup;
+    LinearLayout genderPickerContainer, fitnessLevelPickerContainer, focusZonesContainer, physicalLimitationsCheckboxContainer, startingWeightPickerContainer,
             targetWeightPickerContainer, heightPickerContainer;
-    CheckBox noneCheckBox, kneePainCheckBox, backPainCheckBox, limitedMobilityCheckBox, otherCheckBox;
+    CheckBox chestCheckbox, backCheckbox, armsCheckbox, legsCheckbox, absCheckbox, noneCheckBox, kneePainCheckBox, backPainCheckBox, limitedMobilityCheckBox, otherCheckBox;
     NumberPicker startingWeightPicker, targetWeightPicker, heightPicker;
-    Button fitnessLevelOkButton, startingWeightButton, targetWeightButton, heightButton;
+    Button genderOkButton, fitnessLevelOkButton, focusZonesOkButton, physicalLimitationsOkButton,
+            startingWeightButton, targetWeightButton, heightButton, saveButton;
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int MAX_WEIGHT_KG = 150;
     private static final int MAX_HEIGHT_CM = 250;
+    private Uri selectedImageUri; // declare the URI variable outside of the method
 
 
     @Override
@@ -44,15 +58,27 @@ public class Edit_Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        profileImage = findViewById(R.id.profile_image);
+        profileImage = findViewById(R.id.edit_profile_image);
+        userName = findViewById(R.id.edit_profile_name);
+        genderText = findViewById(R.id.gender_text);
+        genderRadioGroup = findViewById(R.id.gender_radio_group);
+        genderOkButton = findViewById(R.id.gender_ok_button);
+        genderPickerContainer = findViewById(R.id.gender_picker_container);
         fitnessLevelText = findViewById(R.id.fitness_level_text);
         fitnessLevelRadioGroup = findViewById(R.id.fitness_level_radio_group);
         fitnessLevelOkButton = findViewById(R.id.fitness_level_ok_button);
         fitnessLevelPickerContainer = findViewById(R.id.fitness_level_picker_container);
         focusZonesText = findViewById(R.id.focus_zones_text);
+        focusZonesOkButton = findViewById(R.id.focus_zones_ok_button);
         focusZonesContainer = findViewById(R.id.focus_zones_checkbox_container);
+        chestCheckbox = findViewById(R.id.chest_checkbox);
+        backCheckbox = findViewById(R.id.back_checkbox);
+        armsCheckbox = findViewById(R.id.arms_checkbox);
+        legsCheckbox = findViewById(R.id.legs_checkbox);
+        absCheckbox = findViewById(R.id.abs_checkbox);
         birthDateText = findViewById(R.id.birth_of_date_text);
         physicalLimitationsText = findViewById(R.id.physical_limitations_text);
+        physicalLimitationsOkButton = findViewById(R.id.physical_limitations_ok_button);
         physicalLimitationsCheckboxContainer = findViewById(R.id.physical_limitations_checkbox_container);
         noneCheckBox = findViewById(R.id.none_checkbox);
         kneePainCheckBox = findViewById(R.id.knee_pain_checkbox);
@@ -71,61 +97,94 @@ public class Edit_Profile extends AppCompatActivity {
         heightPickerContainer = findViewById(R.id.height_picker_container);
         heightPicker = findViewById(R.id.height_picker);
         heightButton = findViewById(R.id.height_button);
+        saveButton = findViewById(R.id.save_button);
 
 
 // Set an OnClickListener to the CircleImageView
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Create an intent to pick an image from the gallery
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                Intent intent = new Intent();
                 intent.setType("image/*");
-
-                // Start the intent with a request code
+                intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
             }
         });
 
 
+        userName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Do nothing
+            }
 
-                // Set click listener for the fitnessLevelEditText
-                fitnessLevelText.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showFitnessLevelOptions(view);
-                    }
-                });
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Update the name EditText with the new value
+                String name = userName.getText().toString().trim();
+                if (!name.isEmpty()) {
+                    // Store the value somewhere, such as in a SharedPreferences
+                    SharedPreferences.Editor editor = getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+                    editor.putString("name", name);
+                    editor.apply();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Do nothing
+            }
+        });
 
 
-                // Set click listener for the okButton
-                fitnessLevelOkButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        onFitnessLevelOkButtonClick(view);
-                    }
-                });
+        // Set click listener for the genderText
+        genderText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showGenderOptions(view);
+            }
+        });
 
-        // add checkboxes dynamically
-        String[] focusZones = getResources().getStringArray(R.array.focus_zones_array);
-        for (int i = 0; i < focusZones.length; i++) {
-            CheckBox checkBox = new CheckBox(this);
-            checkBox.setText(focusZones[i]);
-            focusZonesContainer.addView(checkBox);
-        }
 
-        // hide the checkbox container initially
-        focusZonesContainer.setVisibility(View.GONE);
+        // Set click listener for the okButton
+        genderOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onGenderOkButtonClick(view);
+            }
+        });
 
-        // set click listener for the edittext
+        // Set click listener for the fitnessLevelEditText
+        fitnessLevelText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showFitnessLevelOptions(view);
+            }
+        });
+
+
+        // Set click listener for the okButton
+        fitnessLevelOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onFitnessLevelOkButtonClick(view);
+            }
+        });
+
+        // Set click listener for the fitnessLevelEditText
         focusZonesText.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // toggle visibility of the checkbox container
-                if (focusZonesContainer.getVisibility() == View.GONE) {
-                    focusZonesContainer.setVisibility(View.VISIBLE);
-                } else {
-                    focusZonesContainer.setVisibility(View.GONE);
-                }
+            public void onClick(View view) {
+                showFocusZonesOptions(view);
+            }
+        });
+
+
+        // Set click listener for the okButton
+        focusZonesOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onFocusZonesOkButtonClick(view);
             }
         });
 
@@ -141,11 +200,7 @@ public class Edit_Profile extends AppCompatActivity {
         physicalLimitationsText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (physicalLimitationsCheckboxContainer.getVisibility() == View.GONE) {
-                    physicalLimitationsCheckboxContainer.setVisibility(View.VISIBLE);
-                } else {
-                    physicalLimitationsCheckboxContainer.setVisibility(View.GONE);
-                }
+                showPhysicalLimitationsOptions(v);
             }
         });
 
@@ -198,6 +253,15 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
+        // Set click listener for physical limitations EditText
+        physicalLimitationsOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPhysicalLimitationsOkButtonClick(v);
+            }
+        });
+
+
         // Set up the starting weight picker
         startingWeightPicker.setMinValue(0);
         startingWeightPicker.setMaxValue(MAX_WEIGHT_KG);
@@ -206,7 +270,7 @@ public class Edit_Profile extends AppCompatActivity {
         startingWeightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startingWeightPickerContainer.setVisibility(View.GONE);
+                onStartingWeightOkButtonClick(v);
             }
         });
 
@@ -218,7 +282,7 @@ public class Edit_Profile extends AppCompatActivity {
         targetWeightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                targetWeightPickerContainer.setVisibility(View.GONE);
+                onTargetWeightOkButtonClick(v);
             }
         });
 
@@ -228,26 +292,21 @@ public class Edit_Profile extends AppCompatActivity {
         heightPicker.setMinValue(0);
         heightPicker.setMaxValue(MAX_HEIGHT_CM);
         heightPicker.setValue(160);
-        heightText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Show the height picker container
-                heightPickerContainer.setVisibility(View.VISIBLE);
-            }
-        });
+
         heightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get the selected height value from the picker
-                int height = heightPicker.getValue();
-
-                // Set the selected height value to the height EditText
-                heightText.setText(String.valueOf(height));
-
-                // Hide the height picker container
-                heightPickerContainer.setVisibility(View.GONE);
+                onHeightOkButtonClick(v);
             }
         });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSaveButtonClick();
+            }
+        });
+
     }
 
     // Override onActivityResult to handle the result of the intent
@@ -256,10 +315,46 @@ public class Edit_Profile extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            // Get the selected image URI and set it to the CircleImageView
             Uri imageUri = data.getData();
-            profileImage.setImageURI(imageUri);
+
+            // add these log statements to check the values of imageUri and selectedImageUri
+            Log.d("DEBUG", "imageUri: " + imageUri);
+            Log.d("DEBUG", "selectedImageUri before: " + selectedImageUri);
+
+            selectedImageUri = imageUri;
+
+            // add this log statement to check the value of selectedImageUri after it has been assigned
+            Log.d("DEBUG", "selectedImageUri after: " + selectedImageUri);
+
+            // load the image using Glide library and set it to the circleImageView
+            if (selectedImageUri != null) {
+                Glide.with(this)
+                        .load(selectedImageUri)
+                        .into(profileImage);
+            }
+
         }
+    }
+
+    // Called when the fitnessLevelEditText is clicked
+    public void showGenderOptions(View view) {
+        // Show the radio group and OK button
+        genderRadioGroup.setVisibility(View.VISIBLE);
+        genderOkButton.setVisibility(View.VISIBLE);
+
+        // Show the container layout
+        genderPickerContainer.setVisibility(View.VISIBLE);
+    }
+
+
+    public void onGenderOkButtonClick(View view) {
+        genderPickerContainer.setVisibility(View.GONE);
+
+        // Get the selected radio button text and display it in the edit text
+        int selectedId = genderRadioGroup.getCheckedRadioButtonId();
+        RadioButton selectedRadioButton = findViewById(selectedId);
+        String selectedText = selectedRadioButton.getText().toString();
+        genderText.setText(selectedText);
     }
 
     // Called when the fitnessLevelEditText is clicked
@@ -273,16 +368,7 @@ public class Edit_Profile extends AppCompatActivity {
     }
 
 
-
-//    public void onFitnessLevelEditTextClick(View view) {
-//        // Show the radio group and OK button
-//        showFitnessLevelOptions(view);
-//    }
-
     public void onFitnessLevelOkButtonClick(View view) {
-        // Hide the radio group and OK button
-//        fitnessLevelRadioGroup.setVisibility(View.GONE);
-//        fitnessLevelOkButton.setVisibility(View.GONE);
         fitnessLevelPickerContainer.setVisibility(View.GONE);
 
         // Get the selected radio button text and display it in the edit text
@@ -290,6 +376,74 @@ public class Edit_Profile extends AppCompatActivity {
         RadioButton selectedRadioButton = findViewById(selectedId);
         String selectedText = selectedRadioButton.getText().toString();
         fitnessLevelText.setText(selectedText);
+    }
+
+    // Called when the focusZonesText is clicked
+    public void showFocusZonesOptions(View view) {
+            focusZonesContainer.setVisibility(View.VISIBLE);
+    }
+
+    public void onFocusZonesOkButtonClick(View view) {
+        StringBuilder selectedZonesBuilder = new StringBuilder();
+
+        for (int i = 0; i < focusZonesContainer.getChildCount(); i++) {
+            View childView = focusZonesContainer.getChildAt(i);
+
+            if (childView instanceof CheckBox) {
+                CheckBox checkBox = (CheckBox) childView;
+
+                if (checkBox.isChecked()) {
+                    selectedZonesBuilder.append(checkBox.getText().toString()).append(", ");
+                }
+            }
+        }
+
+        String selectedZonesText = selectedZonesBuilder.toString().trim();
+
+        if (selectedZonesText.isEmpty()) {
+            selectedZonesText = "Select focus zones";
+        } else {
+            selectedZonesText = selectedZonesText.substring(0, selectedZonesText.length() - 1);
+        }
+
+        TextView focusZonesTextView = findViewById(R.id.focus_zones_text);
+        focusZonesTextView.setText(selectedZonesText);
+
+        focusZonesContainer.setVisibility(View.GONE);
+    }
+
+    public void showPhysicalLimitationsOptions(View view) {
+            physicalLimitationsCheckboxContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void onPhysicalLimitationsOkButtonClick(View view) {
+        StringBuilder sb = new StringBuilder();
+        if (noneCheckBox.isChecked()) {
+            sb.append(noneCheckBox.getText()).append(", ");
+        }
+        if (kneePainCheckBox.isChecked()) {
+            sb.append(kneePainCheckBox.getText()).append(", ");
+        }
+        if (backPainCheckBox.isChecked()) {
+            sb.append(backPainCheckBox.getText()).append(", ");
+        }
+        if (limitedMobilityCheckBox.isChecked()) {
+            sb.append(limitedMobilityCheckBox.getText()).append(", ");
+        }
+        if (otherCheckBox.isChecked()) {
+            sb.append(otherCheckBox.getText()).append(", ");
+        }
+        // Remove the trailing comma and space if any
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 2);
+        }
+
+        // Set the physical limitations text to the selected options
+        String physicalLimitations = sb.toString();
+        physicalLimitationsText.setText(physicalLimitations);
+
+        // Hide the checkboxes container
+        physicalLimitationsCheckboxContainer.setVisibility(View.GONE);
     }
 
 
@@ -314,9 +468,98 @@ public class Edit_Profile extends AppCompatActivity {
     public void showStartingWeightPicker(View view) {
         startingWeightPickerContainer.setVisibility(View.VISIBLE);
     }
+    private void onStartingWeightOkButtonClick(View view) {
+        startingWeightPickerContainer.setVisibility(View.GONE);
+        // Get the selected weight from the picker
+        int startingWeight = startingWeightPicker.getValue();
+
+        // Update the starting weight text
+        startingWeightText.setText(String.valueOf(startingWeight));
+    }
 
     public void showTargetWeightPicker(View view) {
         targetWeightPickerContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void onTargetWeightOkButtonClick(View view) {
+        targetWeightPickerContainer.setVisibility(View.GONE);
+        // Get the selected weight from the picker
+        int targetWeight = targetWeightPicker.getValue();
+
+        // Update the starting weight text
+        targetWeightText.setText(String.valueOf(targetWeight));
+    }
+
+    public void showHeightPicker(View view) {
+        heightPickerContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void onHeightOkButtonClick(View view) {
+        // Get the selected height value from the picker
+        int height = heightPicker.getValue();
+
+        // Set the selected height value to the height EditText
+        heightText.setText(String.valueOf(height));
+
+        // Hide the height picker container
+        heightPickerContainer.setVisibility(View.GONE);
+    }
+
+    private void onSaveButtonClick() {
+        SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        String name = userName.getText().toString();
+        String date = birthDateText.getText().toString();
+        String gender = genderText.getText().toString();
+        String fitnessLevel = fitnessLevelText.getText().toString();
+        String focusZones = focusZonesText.getText().toString();
+        String physicalLimitations = physicalLimitationsText.getText().toString();
+        String startingWeight = startingWeightText.getText().toString();
+        String targetWeight = targetWeightText.getText().toString();
+        String height = heightText.getText().toString();
+        String imageUri = prefs.getString("image", null);
+            if (imageUri != null) {
+                Glide.with(this).load(Uri.parse(imageUri)).into(profileImage);
+            }
+
+        editor.putString("name", name);
+        editor.putString("date", date);
+        editor.putString("gender", gender);
+        editor.putString("fitnessLevel", fitnessLevel);
+        editor.putString("FocusZones", focusZones);
+        editor.putString("physicalLimitations", physicalLimitations);
+        editor.putString("starting_weight", startingWeight);
+        editor.putString("target_weight", targetWeight);
+        editor.putString("height", height);
+
+
+        // add the selected image URI as a string to the shared preferences
+        if (selectedImageUri != null) {
+            editor.putString("image", selectedImageUri.toString());
+        }
+
+        editor.apply();
+
+        Intent intent = new Intent();
+        intent.putExtra("name", name);
+        intent.putExtra("date", date);
+        intent.putExtra("gender", gender);
+        intent.putExtra("fitnessLevel", fitnessLevel);
+        intent.putExtra("focusZones", focusZones);
+        intent.putExtra("physicalLimitations", physicalLimitations);
+        intent.putExtra("startingWeight", startingWeight);
+        intent.putExtra("targetWeight", targetWeight);
+        intent.putExtra("height", height);
+
+        if (selectedImageUri != null) {
+            profileImage.setImageURI(selectedImageUri);
+        } else {
+            profileImage.setImageResource(R.drawable.ic_launcher_foreground);
+        }
+
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
 

@@ -1,6 +1,9 @@
 package com.example.finalproject;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -18,8 +21,10 @@ public class Question7Fragment extends Fragment {
 
         private NumberPicker startingWeightPicker, targetWeightPicker, heightPicker;
         private FloatingActionButton finishButton;
+        //private SharedPreferences sharedPreferences;
 
-        private static final int MAX_WEIGHT_KG = 150;
+
+    private static final int MAX_WEIGHT_KG = 150;
         private static final int MAX_HEIGHT_CM = 250;
 
         public Question7Fragment() {
@@ -31,6 +36,8 @@ public class Question7Fragment extends Fragment {
                                  Bundle savedInstanceState) {
             // Inflate the layout for this fragment
             View view = inflater.inflate(R.layout.fragment_question7, container, false);
+
+            //sharedPreferences = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE);
 
             startingWeightPicker = view.findViewById(R.id.starting_weight_picker);
             targetWeightPicker = view.findViewById(R.id.target_weight_picker);
@@ -66,6 +73,15 @@ public class Question7Fragment extends Fragment {
                         Toast.makeText(getActivity(), "Please select your height, weight, and target weight ", Toast.LENGTH_SHORT).show();
                         return;
                     }
+
+                    String startingWeightString = Integer.toString(startingWeight);
+                    String targetWeightString = Integer.toString(targetWeight);
+                    String heightString = Integer.toString(height);
+                    SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+                    editor.putString("starting_weight", startingWeightString);
+                    editor.putString("target_weight", targetWeightString);
+                    editor.putString("height", heightString);
+                    editor.apply();
 
                     Intent intent= new Intent(getActivity(), MainActivity.class);
                     startActivity(intent);

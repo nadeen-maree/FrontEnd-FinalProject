@@ -1,5 +1,8 @@
 package com.example.finalproject;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -35,6 +38,7 @@ public class Question4Fragment extends Fragment {
             public void onClick(View view) {
                 int selectedId = fitnessLevelRadioGroup.getCheckedRadioButtonId();
                 String fitnessLevel = "";
+
                 if (selectedId == R.id.beginner_radio_button) {
                     fitnessLevel = "Beginner";
                 } else if (selectedId == R.id.intermediate_radio_button) {
@@ -46,6 +50,10 @@ public class Question4Fragment extends Fragment {
                 Toast.makeText(getContext(), "Please select a fitness level", Toast.LENGTH_SHORT).show();
                 return;
             }
+                SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+                editor.putString("fitnessLevel", fitnessLevel);
+                editor.apply();
+
                 Bundle bundle = new Bundle();
                 bundle.putString("fitness_level", fitnessLevel);
                 Question5Fragment question5Fragment = new Question5Fragment();
