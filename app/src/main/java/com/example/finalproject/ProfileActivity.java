@@ -12,12 +12,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    TextView personal_plan, food, challenges, user_profile;
+    FloatingActionButton exe;
     CircleImageView profileImage;
     TextView profileNameTextView, profileDateTextView, profileGenderTextView, profileDietTypeTextView,
             profileFitnessLevelTextView, profileFocusZonesTextView, profilePhysicalLimitationsTextView,
@@ -37,6 +40,11 @@ public class ProfileActivity extends AppCompatActivity {
         mContext = this; // initialize the context
         SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
 
+        personal_plan = findViewById(R.id.tab1_txt);
+        food = findViewById(R.id.tab2_txt);
+        challenges = findViewById(R.id.tab4_txt);
+        user_profile = findViewById(R.id.tab5_txt);
+        exe = findViewById(R.id.training_btn);
 
         profileImage = findViewById(R.id.profile_image);
         profileNameTextView = findViewById(R.id.profile_name);
@@ -50,6 +58,40 @@ public class ProfileActivity extends AppCompatActivity {
         profileTargetWeightTextView = findViewById(R.id.profile_target_weight);
         profileHeightTextView = findViewById(R.id.profile_height);
         editProfileButton = findViewById(R.id.edit_profile_button);
+
+
+        personal_plan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(ProfileActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        food.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(ProfileActivity.this, Food.class);
+                startActivity(intent);
+            }
+        });
+
+        challenges.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(ProfileActivity.this, Challenges.class);
+                startActivity(intent);
+            }
+        });
+
+        exe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(ProfileActivity.this, TrainingActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         String name = prefs.getString("name", "");
         profileNameTextView.setText(name);

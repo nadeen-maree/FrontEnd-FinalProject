@@ -21,4 +21,5 @@
     <color name="water_blue_50">#666bfe</color>
     <color name="water_blue_100">#1e40ca</color>
     <color name="water_blue_150">#001a98</color>
+    <color name="red">#FF0000</color>
 </resources>
