@@ -43,6 +43,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -208,8 +209,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/googleFitButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout5">
@@ -268,14 +269,27 @@
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/targetText"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_margin="6dp"
-                        android:text="10,000 Steps"
+                        android:text="10,000"
                         android:textColor="@color/reply_black_800"
                         android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/StepsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_margin="6dp"
+                        android:text="Steps"
+                        android:textColor="@color/reply_black_800"
+                        android:textSize="18sp" />
+                </LinearLayout>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -306,10 +320,9 @@
 
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/googleFitButton"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_btn"
         android:text="Turn On Google Fit"
@@ -317,21 +330,12 @@
         android:textColor="@color/blue"
         android:textSize="26sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/imageView7"
+        app:layout_constraintBottom_toTopOf="@+id/coordinatorLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/constraintLayout" />
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/button2"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="@+id/button2"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

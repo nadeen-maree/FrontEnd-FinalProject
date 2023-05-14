@@ -270,14 +270,16 @@
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
-                <androidx.appcompat.widget.ActionMenuView
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:padding="5dp">
                     <TextView
                         android:id="@+id/targetText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1,200"
+                        android:layout_marginRight="5dp"
                         android:textColor="@color/reply_black_800"
                         android:textSize="18sp" />
 
@@ -288,7 +290,7 @@
                         android:text="Calories"
                         android:textColor="@color/reply_black_800"
                         android:textSize="18sp" />
-                </androidx.appcompat.widget.ActionMenuView>
+                </LinearLayout>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

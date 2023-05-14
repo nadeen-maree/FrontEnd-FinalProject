@@ -233,7 +233,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:marginBtwText="15dp"
             app:percentage="0"
-            app:progressColor="@color/water_blue_100" />
+            app:progressColor="@color/light_blue_A200" />
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/mainInfoContainer"
@@ -246,55 +246,6 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/wheelProgress">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/drunkInfoContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="12dp">
-
-            <com.google.android.material.circularreveal.CircularRevealRelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="6dp"
-                    android:src="@drawable/circle" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:padding="6dp"
-                    android:src="@drawable/ic_water" />
-
-            </com.google.android.material.circularreveal.CircularRevealRelativeLayout>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="6dp"
-                    android:text="@string/drunk"
-                    android:textColor="@color/reply_black_800"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/drunkText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="6dp"
-                    android:text="800 ML"
-                    android:textColor="@color/reply_black_800" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-        </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/targetInfoContainer"
@@ -311,19 +262,33 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="6dp"
                         android:text="@string/target"
                         android:textColor="@color/reply_black_800"
-                        android:textSize="16sp"
+                        android:textSize="24sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/targetText"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="6dp"
-                        android:text="1.000 ML"
-                        android:textColor="@color/reply_black_800" />
+                        android:padding="5dp">
+
+                        <TextView
+                            android:id="@+id/mlTargetText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="3,000"
+                            android:layout_marginRight="5dp"
+                            android:textColor="@color/reply_black_800"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/mlText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ML"
+                            android:textColor="@color/reply_black_800"
+                            android:textSize="18sp" />
+                    </LinearLayout>
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -352,35 +317,33 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <Button
-            android:id="@+id/drinkWaterButton"
+        <TextView
+            android:id="@+id/ml_message_TextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Message"
+            android:textColor="@color/red"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/drinkWaterButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mainInfoContainer" />
+
+        <Button
+            android:id="@+id/drinkWaterButton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
             android:text="@string/drink"
-            app:layout_constraintBottom_toTopOf="@id/drunkListContainer"
+            android:background="@drawable/round_btn"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/mainInfoContainer" />
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/drunkListContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:fillViewport="true"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/drinkWaterButton">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/drinksRecyclerView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

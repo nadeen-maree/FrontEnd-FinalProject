@@ -47,7 +47,7 @@ public class Add_Food extends AppCompatActivity {
         dinnerEditText = findViewById(R.id.dinner);
         snackEditText = findViewById(R.id.snack);
         progressWheel = findViewById(R.id.wheelProgress);
-        TextView caloriesMessageTextView = findViewById(R.id.calories_message_TextView);
+        caloriesMessageTextView = findViewById(R.id.calories_message_TextView);
         caloriesMessageTextView.setVisibility(View.GONE);
 
         int targetCalories = Integer.parseInt(targetText.getText().toString().replaceAll("[^\\d]", ""));
