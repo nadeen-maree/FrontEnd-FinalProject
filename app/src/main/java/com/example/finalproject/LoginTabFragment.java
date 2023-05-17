@@ -71,7 +71,7 @@ public class LoginTabFragment extends Fragment {
                 //editor.putString("userPassword", userPassword).apply();
 
                 HttpPostTask task = new HttpPostTask();
-                task.execute("http://www.example.com/api/login", userEmail, userPassword);
+                task.execute("http://10.0.2.2:8181/users/login", userEmail, userPassword);
 
                 Intent intent= new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
@@ -95,8 +95,8 @@ public class LoginTabFragment extends Fragment {
                 conn.setDoInput(true);
 
                 JSONObject jsonParam = new JSONObject();
-                jsonParam.put("userEmail", email.getText().toString());
-                jsonParam.put("userPassword", pass.getText().toString());
+                jsonParam.put("userName", email.getText().toString());
+                jsonParam.put("password", pass.getText().toString());
 
                 DataOutputStream os = new DataOutputStream(conn.getOutputStream());
                 os.writeBytes(jsonParam.toString());
