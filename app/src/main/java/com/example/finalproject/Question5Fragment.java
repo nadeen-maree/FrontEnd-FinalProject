@@ -3,6 +3,7 @@ package com.example.finalproject;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -13,6 +14,16 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Question5Fragment extends Fragment {
 
@@ -54,16 +65,84 @@ public class Question5Fragment extends Fragment {
                 editor.apply();
 
                 Bundle bundle = new Bundle();
-                bundle.putString("fitness_level", fitnessLevel);
+                bundle.putString("fitnessLevel", fitnessLevel);
                 Question6Fragment question6Fragment = new Question6Fragment();
                 question6Fragment.setArguments(bundle);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, question6Fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
+
+                new Question5Fragment.HttpPostTask().execute(fitnessLevel);
             }
         });
 
         return view;
+    }
+
+    private class HttpPostTask extends AsyncTask<String, Void, String> {
+
+        private String fitnessLevel;
+        String response = "";
+        @Override
+        protected String doInBackground(String... params) {
+            fitnessLevel = params[0];
+            String urlStr = "http://example.com/api/fitnessLevel";
+            String postData = "fitnessLevel=" + fitnessLevel;
+
+            try {
+                URL url = new URL(urlStr);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
+
+                // Write POST data to request body
+                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                os.writeBytes(postData);
+                os.flush();
+                os.close();
+
+                // Read response from server
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    InputStream inputStream = conn.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        response += line;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                try {
+                    JSONObject json = new JSONObject(result);
+
+                    // Handle response from server
+                    // ...
+
+                    // Navigate to next question
+                    Bundle bundle = new Bundle();
+                    bundle.putString("fitnessLevel", fitnessLevel);
+                    Question6Fragment question6Fragment = new Question6Fragment();
+                    question6Fragment.setArguments(bundle);
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, question6Fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,6 +26,15 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -365,7 +375,6 @@ public class Edit_Profile extends AppCompatActivity {
                 onSaveButtonClick();
             }
         });
-
     }
 
     // Override onActivityResult to handle the result of the intent
@@ -391,7 +400,6 @@ public class Edit_Profile extends AppCompatActivity {
                         .load(selectedImageUri)
                         .into(profileImage);
             }
-
         }
     }
 
@@ -404,7 +412,6 @@ public class Edit_Profile extends AppCompatActivity {
         // Show the container layout
         genderPickerContainer.setVisibility(View.VISIBLE);
     }
-
 
     public void onGenderOkButtonClick(View view) {
         genderPickerContainer.setVisibility(View.GONE);
@@ -426,7 +433,6 @@ public class Edit_Profile extends AppCompatActivity {
         dietTypePickerContainer.setVisibility(View.VISIBLE);
     }
 
-
     public void onDietTypeOkButtonClick(View view) {
         dietTypePickerContainer.setVisibility(View.GONE);
 
@@ -437,7 +443,6 @@ public class Edit_Profile extends AppCompatActivity {
         dietTypeText.setText(selectedText);
     }
 
-
     // Called when the fitnessLevelText is clicked
     public void showFitnessLevelOptions(View view) {
         // Show the radio group and OK button
@@ -447,7 +452,6 @@ public class Edit_Profile extends AppCompatActivity {
         // Show the container layout
         fitnessLevelPickerContainer.setVisibility(View.VISIBLE);
     }
-
 
     public void onFitnessLevelOkButtonClick(View view) {
         fitnessLevelPickerContainer.setVisibility(View.GONE);
@@ -526,8 +530,6 @@ public class Edit_Profile extends AppCompatActivity {
         // Hide the checkboxes container
         physicalLimitationsCheckboxContainer.setVisibility(View.GONE);
     }
-
-
 
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
@@ -642,8 +644,104 @@ public class Edit_Profile extends AppCompatActivity {
             profileImage.setImageResource(R.drawable.ic_launcher_foreground);
         }
 
+        // Create the JSON request body
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("name", name);
+            requestBody.put("date", date);
+            requestBody.put("gender", gender);
+            requestBody.put("dietType", dietType);
+            requestBody.put("fitnessLevel", fitnessLevel);
+            requestBody.put("focusZones", focusZones);
+            requestBody.put("physicalLimitations", physicalLimitations);
+            requestBody.put("startingWeight", startingWeight);
+            requestBody.put("targetWeight", targetWeight);
+            requestBody.put("height", height);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // Create an instance of HttpPostTask and execute it
+        String url = "http://example.com/api/edit-profile";
+        HttpPostTask task = new HttpPostTask(url, requestBody.toString(), new HttpPostTask.OnHttpPostTaskCompleted() {
+            @Override
+            public void onHttpPostTaskCompleted(String response) {
+                // Process the response as needed
+                // ...
+                System.out.println("Response: " + response);
+            }
+        });
+        task.execute();
+
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    public static class HttpPostTask extends AsyncTask<String, Void, String> {
+        private final String url;
+        private final String requestBody;
+        private final OnHttpPostTaskCompleted listener;
+
+        public HttpPostTask(String url, String requestBody, OnHttpPostTaskCompleted listener) {
+            this.url = url;
+            this.requestBody = requestBody;
+            this.listener = listener;
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            try {
+                // Create the connection
+                URL url = new URL(this.url);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoOutput(true);
+
+                // Set the request body
+                OutputStream outputStream = urlConnection.getOutputStream();
+                outputStream.write(requestBody.getBytes());
+                outputStream.flush();
+                outputStream.close();
+
+                // Read the response
+                StringBuilder response = new StringBuilder();
+                reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                return response.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            if (listener != null) {
+                listener.onHttpPostTaskCompleted(response);
+            }
+        }
+
+        public interface OnHttpPostTaskCompleted {
+            void onHttpPostTaskCompleted(String response);
+        }
     }
 
 

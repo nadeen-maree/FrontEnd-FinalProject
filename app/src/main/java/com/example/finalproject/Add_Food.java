@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -16,6 +17,15 @@ import android.widget.Toast;
 
 import com.app.progresviews.ProgressWheel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Add_Food extends AppCompatActivity {
 
@@ -149,6 +159,10 @@ public class Add_Food extends AppCompatActivity {
                 editor.putString("dinner", dinnerEditText.getText().toString()).apply();
                 editor.putString("snack", snackEditText.getText().toString()).apply();
                 editor.putInt("totalCalories", totalCalories).apply();
+
+                // Create an instance of the HttpPostTask and execute it
+                HttpPostTask httpPostTask = new HttpPostTask();
+                httpPostTask.execute();
             }
 
             @Override
@@ -183,5 +197,67 @@ public class Add_Food extends AppCompatActivity {
         int intPercentage = percentage.intValue();
 
         return intPercentage;
+    }
+
+    private class HttpPostTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+            // Perform the HTTP POST request here
+            String urlStr = "http://example.com/api/food";
+            try {
+                URL url = new URL(urlStr);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setDoOutput(true);
+
+                // Create the JSON request body
+                JSONObject requestBody = new JSONObject();
+                requestBody.put("breakfast", breakfastEditText.getText().toString());
+                requestBody.put("lunch", lunchEditText.getText().toString());
+                requestBody.put("dinner", dinnerEditText.getText().toString());
+                requestBody.put("snack", snackEditText.getText().toString());
+
+                // Write the JSON request body to the request stream
+                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+                writer.write(requestBody.toString());
+                writer.flush();
+
+                // Read the response from the server
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Successful response
+                    InputStream inputStream = conn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+
+                    // Return the response as a string
+                    return response.toString();
+                } else {
+                    // Error handling for unsuccessful response
+                    return null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                // Handle the response from the server
+                Toast.makeText(Add_Food.this, "Response: " + result, Toast.LENGTH_SHORT).show();
+            } else {
+                // Error handling for unsuccessful response
+                Toast.makeText(Add_Food.this, "An error occurred", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

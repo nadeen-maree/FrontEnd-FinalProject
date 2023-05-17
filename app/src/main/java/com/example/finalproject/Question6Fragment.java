@@ -3,6 +3,7 @@ package com.example.finalproject;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -17,6 +18,13 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,8 +109,73 @@ public class Question6Fragment extends Fragment {
                 transaction.replace(R.id.fragment_container, question7Fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
+
+                new HttpPostTask().execute(selectedFocusZonesString);
+
             }
         });
         return view;
+    }
+
+    private class HttpPostTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String url = params[0];
+            String selectedFocusZonesString = params[1];
+
+            try {
+                URL obj = new URL(url);
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+                // Set the request method and headers
+                con.setRequestMethod("POST");
+                con.setRequestProperty("Content-Type", "application/json");
+
+                // Create the request body
+                JSONObject requestBody = new JSONObject();
+                requestBody.put("selectedFocusZones", selectedFocusZonesString);
+
+                // Convert the request body to a byte array and set it as the request entity
+                byte[] requestBodyBytes = requestBody.toString().getBytes("UTF-8");
+                con.setDoOutput(true);
+                con.setFixedLengthStreamingMode(requestBodyBytes.length);
+                OutputStream outputStream = con.getOutputStream();
+                outputStream.write(requestBodyBytes);
+                outputStream.flush();
+                outputStream.close();
+
+                // Read the response from the server
+                int responseCode = con.getResponseCode();
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                // Return the response from the server
+                return response.toString();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+
+            if (response != null) {
+                // Handle the response from the server
+                Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
+            } else {
+                // Handle the error
+                Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
     }
 }

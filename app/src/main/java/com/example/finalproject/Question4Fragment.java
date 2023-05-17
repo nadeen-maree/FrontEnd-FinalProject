@@ -3,6 +3,7 @@ package com.example.finalproject;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,16 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Question4Fragment extends Fragment {
 
@@ -32,6 +43,8 @@ public class Question4Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question4, container, false);
+
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
 
         dietTypeRadioGroup = view.findViewById(R.id.diet_type__radio_group);
         traditionalRadioButton = view.findViewById(R.id.traditional_radio_button);
@@ -56,9 +69,8 @@ public class Question4Fragment extends Fragment {
                     Toast.makeText(getContext(), "Please select a diet type", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
-                editor.putString("dietType", dietType);
-                editor.apply();
+                editor.putString("dietType", dietType).apply();
+
 
                 Bundle bundle = new Bundle();
                 bundle.putString("dietType", dietType);
@@ -68,9 +80,76 @@ public class Question4Fragment extends Fragment {
                 transaction.replace(R.id.fragment_container, question5Fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
+
+                new Question4Fragment.HttpPostTask().execute(dietType);
             }
         });
 
         return view;
+    }
+    private class HttpPostTask extends AsyncTask<String, Void, String> {
+
+        private String dietType;
+        String response = "";
+        @Override
+        protected String doInBackground(String... params) {
+            dietType = params[0];
+            String urlStr = "http://example.com/api/dietType";
+            String postData = "dietType=" + dietType;
+
+            try {
+                URL url = new URL(urlStr);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
+
+                // Write POST data to request body
+                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                os.writeBytes(postData);
+                os.flush();
+                os.close();
+
+                // Read response from server
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    InputStream inputStream = conn.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        response += line;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                try {
+                    JSONObject json = new JSONObject(result);
+
+                    // Handle response from server
+                    // ...
+
+                    // Navigate to next question
+                    Bundle bundle = new Bundle();
+                    bundle.putString("dietType", dietType);
+                    Question5Fragment question5Fragment = new Question5Fragment();
+                    question5Fragment.setArguments(bundle);
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, question5Fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

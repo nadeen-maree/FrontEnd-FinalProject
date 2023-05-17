@@ -3,6 +3,7 @@ package com.example.finalproject;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,16 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class Question3Fragment extends Fragment {
 
@@ -32,6 +43,8 @@ public class Question3Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question3, container, false);
+
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
 
         genderRadioGroup = view.findViewById(R.id.gender_radio_group);
         maleRadioButton = view.findViewById(R.id.male_radio_button);
@@ -52,11 +65,10 @@ public class Question3Fragment extends Fragment {
                 } else if (selectedId == otherRadioButton.getId()) {
                     gender = "Other";
                 } else {
-                // Show error message and return
-                Toast.makeText(getContext(), "Please select a gender", Toast.LENGTH_SHORT).show();
-                return;
-            }
-                SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+                    // Show error message and return
+                    Toast.makeText(getContext(), "Please select a gender", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 editor.putString("gender", gender);
                 editor.apply();
 
@@ -68,9 +80,76 @@ public class Question3Fragment extends Fragment {
                 transaction.replace(R.id.fragment_container, question4Fragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
+
+                new HttpPostTask().execute(gender);
             }
         });
 
         return view;
+    }
+    private class HttpPostTask extends AsyncTask<String, Void, String> {
+
+        private String gender;
+        String response = "";
+        @Override
+        protected String doInBackground(String... params) {
+            gender = params[0];
+            String urlStr = "http://example.com/api/gender";
+            String postData = "gender=" + gender;
+
+            try {
+                URL url = new URL(urlStr);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
+
+                // Write POST data to request body
+                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                os.writeBytes(postData);
+                os.flush();
+                os.close();
+
+                // Read response from server
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    InputStream inputStream = conn.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        response += line;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                try {
+                    JSONObject json = new JSONObject(result);
+
+                    // Handle response from server
+                    // ...
+
+                    // Navigate to next question
+                    Bundle bundle = new Bundle();
+                    bundle.putString("gender", gender);
+                    Question4Fragment question4Fragment = new Question4Fragment();
+                    question4Fragment.setArguments(bundle);
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, question4Fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

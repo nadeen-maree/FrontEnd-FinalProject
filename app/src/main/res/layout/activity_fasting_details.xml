@@ -18,176 +18,6 @@
 <!--        app:abb_tabs="@menu/tabs"-->
 <!--        app:abb_selectedIndex="1" />-->
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.google.android.material.bottomappbar.BottomAppBar
-            android:id="@+id/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_gravity="bottom"
-            android:backgroundTint="@color/green"
-            app:fabCradleMargin="8dp"
-            app:fabCradleRoundedCornerRadius="50dp"
-            app:fabCradleVerticalOffset="6dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/tab1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:layout_weight="1"
-                        app:srcCompat="@drawable/bg_btn" />
-
-                    <TextView
-                        android:id="@+id/tab1_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:text="Personal Plan"
-                        android:textAlignment="center"
-                        android:textColor="#ffffff"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/tab2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        app:srcCompat="@drawable/bg_btn" />
-
-                    <TextView
-                        android:id="@+id/tab2_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:text="Food"
-                        android:textAlignment="center"
-                        android:textColor="#ffffff"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical"
-                    android:visibility="invisible">
-
-                    <ImageView
-                        android:id="@+id/tab3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/bg_btn" />
-
-                    <TextView
-                        android:id="@+id/tab3_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:text="Training"
-                        android:textAlignment="center"
-                        android:textColor="#F85500"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/tab4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        app:srcCompat="@drawable/bg_btn" />
-
-                    <TextView
-                        android:id="@+id/tab4_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:text="Challenges"
-                        android:textAlignment="center"
-                        android:textColor="#ffffff"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.2"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:id="@+id/tab5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        app:srcCompat="@drawable/bg_btn" />
-
-                    <TextView
-                        android:id="@+id/tab5_txt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:text="Profile"
-                        android:textAlignment="center"
-                        android:textColor="#ffffff"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-            </LinearLayout>
-        </com.google.android.material.bottomappbar.BottomAppBar>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/blue"
-            android:src="@drawable/fit_icon"
-            app:backgroundTint="@color/blue"
-            app:layout_anchor="@id/app_bar"
-            app:maxImageSize="30dp"
-            app:tint="#ffffff" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
         <ImageView
             android:id="@+id/back"
             android:layout_width="30dp"
@@ -199,274 +29,321 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tv_fasting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/set_your_fast_time_window"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_fasting"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:text="@string/set_your_fast_time_window"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textSize="18sp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.0"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
-        <FrameLayout
-            android:id="@+id/fl_fasting"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_fasting">
+<!--        <FrameLayout-->
+<!--            android:id="@+id/fl_fasting"-->
+<!--            android:layout_width="280dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/tv_fasting">-->
 
-            <nl.joery.timerangepicker.TimeRangePicker
-                android:id="@+id/trp_sleeping"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:trp_endTime="07:30"
-                app:trp_sliderRangeGradientEnd="@color/light_green"
-                app:trp_sliderRangeGradientMiddle="@android:color/holo_orange_dark"
-                app:trp_sliderRangeGradientStart="@color/green"
-                app:trp_startTime="23:30"
-                app:trp_thumbIconEnd="@drawable/alarm"
-                app:trp_thumbIconStart="@drawable/moon" />
+<!--            <nl.joery.timerangepicker.TimeRangePicker-->
+<!--                android:id="@+id/trp_sleeping"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                app:trp_endTime="07:30"-->
+<!--                app:trp_sliderRangeGradientEnd="@color/light_green"-->
+<!--                app:trp_sliderRangeGradientMiddle="@android:color/holo_orange_dark"-->
+<!--                app:trp_sliderRangeGradientStart="@color/green"-->
+<!--                app:trp_startTime="23:30"-->
+<!--                app:trp_thumbIconEnd="@drawable/alarm"-->
+<!--                app:trp_thumbIconStart="@drawable/moon" />-->
 
-            <LinearLayout
-                android:id="@+id/time_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical">
+<!--            <LinearLayout-->
+<!--                android:id="@+id/time_layout"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:orientation="vertical">-->
 
-                <LinearLayout
-                    android:id="@+id/bedtime_layout"
-                    android:layout_width="90dp"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp">
+<!--                <LinearLayout-->
+<!--                    android:id="@+id/bedtime_layout"-->
+<!--                    android:layout_width="90dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:orientation="horizontal"-->
+<!--                    android:paddingTop="4dp"-->
+<!--                    android:paddingBottom="4dp">-->
 
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="0dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_weight="1"-->
+<!--                        android:orientation="vertical">-->
 
-                        <TextView
-                            android:id="@+id/start_time"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textAlignment="center"
-                            android:textColor="?android:textColorPrimary"
-                            android:textSize="20sp"
-                            tools:text="00:00" />
-                    </LinearLayout>
-                </LinearLayout>
-            </LinearLayout>
+<!--                        <TextView-->
+<!--                            android:id="@+id/start_time"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:textAlignment="center"-->
+<!--                            android:textColor="?android:textColorPrimary"-->
+<!--                            android:textSize="20sp"-->
+<!--                            tools:text="00:00" />-->
+<!--                    </LinearLayout>-->
+<!--                </LinearLayout>-->
+<!--            </LinearLayout>-->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone">
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:visibility="gone">-->
 
-                <TextView
-                    android:id="@+id/duration_hour"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="32sp"
-                    tools:text="08" />
+<!--                <TextView-->
+<!--                    android:id="@+id/duration_hour"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textColor="?android:textColorPrimary"-->
+<!--                    android:textSize="32sp"-->
+<!--                    tools:text="08" />-->
 
-                <TextView
-                    android:id="@+id/duration_hour_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="6dp"
-                    android:text=":"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="32sp"
-                    android:textStyle="bold" />
+<!--                <TextView-->
+<!--                    android:id="@+id/duration_hour_label"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="6dp"-->
+<!--                    android:layout_marginEnd="6dp"-->
+<!--                    android:text=":"-->
+<!--                    android:textColor="?android:textColorPrimary"-->
+<!--                    android:textSize="32sp"-->
+<!--                    android:textStyle="bold" />-->
 
-                <TextView
-                    android:id="@+id/duration_minute"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="?android:textColorPrimary"
-                    android:textSize="32sp"
-                    tools:text="22" />
-            </LinearLayout>
-        </FrameLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/duration_minute"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:textColor="?android:textColorPrimary"-->
+<!--                    android:textSize="32sp"-->
+<!--                    tools:text="22" />-->
+<!--            </LinearLayout>-->
+<!--        </FrameLayout>-->
 
-        <TextView
-            android:id="@+id/tv_sleeping_duration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:textStyle="italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/fl_fasting" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_sleeping_duration"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textSize="12sp"-->
+<!--            android:textStyle="italic"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/fl_fasting" />-->
 
-        <TextView
-            android:id="@+id/tv_method"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="@string/durations"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_sleeping_duration" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_method"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:text="@string/durations"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textSize="18sp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/tv_sleeping_duration" />-->
 
-        <TextView
-            android:id="@+id/tv_method_selected"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:textAlignment="center"
-            android:textColor="?colorPrimary"
-            android:textSize="16sp"
-            android:textStyle="italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_method" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_method_selected"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="15dp"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textColor="?colorPrimary"-->
+<!--            android:textSize="16sp"-->
+<!--            android:textStyle="italic"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/tv_method" />-->
 
-        <androidx.appcompat.widget.AppCompatSeekBar
-            android:id="@+id/sb_method"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="3"
-            android:progress="1"
-            app:layout_constraintTop_toBottomOf="@id/tv_method_selected" />
+<!--        <androidx.appcompat.widget.AppCompatSeekBar-->
+<!--            android:id="@+id/sb_method"-->
+<!--            style="@style/Widget.AppCompat.SeekBar.Discrete"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:max="3"-->
+<!--            android:progress="1"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/tv_method_selected" />-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="@string/moderate"
-            android:textColor="?colorSecondary"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@id/sb_method"
-            app:layout_constraintTop_toBottomOf="@id/sb_method" />
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="5dp"-->
+<!--            android:text="@string/moderate"-->
+<!--            android:textColor="?colorSecondary"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintStart_toStartOf="@id/sb_method"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/sb_method" />-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="@string/extreme"
-            android:textColor="?colorSecondary"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@id/sb_method"
-            app:layout_constraintTop_toBottomOf="@id/sb_method" />
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="5dp"-->
+<!--            android:text="@string/extreme"-->
+<!--            android:textColor="?colorSecondary"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/sb_method"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/sb_method" />-->
 
-        <TextView
-            android:id="@+id/tv_result"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:text="@string/eating_period"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/card_start"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sb_method"
-            app:layout_constraintVertical_bias="0.32" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_result"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginBottom="25dp"-->
+<!--            android:text="@string/eating_period"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textSize="18sp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/card_start"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.0"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/sb_method"-->
+<!--            app:layout_constraintVertical_bias="0.32" />-->
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/card_end"
-            app:layout_constraintStart_toStartOf="parent">
+<!--        <com.google.android.material.card.MaterialCardView-->
+<!--            android:id="@+id/card_start"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginBottom="20dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/card_end"-->
+<!--            app:layout_constraintStart_toStartOf="parent">-->
 
-        </com.google.android.material.card.MaterialCardView>
+<!--        </com.google.android.material.card.MaterialCardView>-->
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/card_start"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/card_start">
+<!--        <com.google.android.material.card.MaterialCardView-->
+<!--            android:id="@+id/card_end"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/card_start"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@id/card_start">-->
 
-        </com.google.android.material.card.MaterialCardView>
+<!--        </com.google.android.material.card.MaterialCardView>-->
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="30dp"
-            app:layout_constraintBottom_toTopOf="@+id/card_start"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.126"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_result"
-            app:layout_constraintVertical_bias="0.323">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/linearLayout"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:padding="30dp"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/card_start"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.126"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/tv_result"-->
+<!--            app:layout_constraintVertical_bias="0.323">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/breakfast"
-                android:textAlignment="center"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/breakfast"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="bold" />-->
 
-            <TextView
-                android:id="@+id/tv_breakfast_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textColor="?colorPrimary"
-                android:textSize="16sp"
-                android:textStyle="italic" />
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:id="@+id/tv_breakfast_time"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textColor="?colorPrimary"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="italic" />-->
+<!--        </LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="30dp"
-            app:layout_constraintBottom_toTopOf="@+id/card_end"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.487"
-            app:layout_constraintStart_toEndOf="@+id/linearLayout"
-            app:layout_constraintTop_toBottomOf="@+id/tv_result"
-            app:layout_constraintVertical_bias="0.323">
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:padding="30dp"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/card_end"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.487"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/linearLayout"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/tv_result"-->
+<!--            app:layout_constraintVertical_bias="0.323">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fast"
-                android:textAlignment="center"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/fast"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="bold" />-->
 
-            <TextView
-                android:id="@+id/tv_fast_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:textColor="?colorPrimary"
-                android:textSize="16sp"
-                android:textStyle="italic" />
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:id="@+id/tv_fast_time"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textAlignment="center"-->
+<!--                android:textColor="?colorPrimary"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="italic" />-->
+<!--        </LinearLayout>-->
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <com.app.progresviews.ProgressWheel
+        android:id="@+id/wheelProgress"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:barWidth="15dp"
+        app:countText="0"
+        app:countTextColor="@android:color/black"
+        app:countTextSize="20sp"
+        app:defTextColor="@android:color/black"
+        app:defTextSize="10sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.108"
+        app:marginBtwText="15dp"
+        app:percentage="0"
+        app:progressColor="@color/green" />
+
+    <TextView
+        android:id="@+id/timer_text_view"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="00:00:00"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/start_stop_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wheelProgress" />
+
+    <Button
+        android:id="@+id/start_stop_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_btn"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:onClick="startStopTimer"
+        android:text="Start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/wheelProgress" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
