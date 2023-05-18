@@ -34,12 +34,16 @@ public class LoginTabFragment extends Fragment {
      private Button login;
      float v = 0;
 
+    static final String SHARED_PREFS_KEY = "myPrefs";
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.login_tab_fragment, container, false);
 
         //SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+
+        sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
         email = root.findViewById(R.id.email);
         pass = root.findViewById(R.id.pass);
@@ -71,10 +75,16 @@ public class LoginTabFragment extends Fragment {
                 //editor.putString("userPassword", userPassword).apply();
 
                 HttpPostTask task = new HttpPostTask();
-                task.execute("http://www.example.com/api/login", userEmail, userPassword);
+                task.execute("http://10.0.2.2:8181/users/login", userEmail, userPassword);
 
                 Intent intent= new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
+
+                String sharedEmail = email.getText().toString();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("email", sharedEmail);
+                editor.apply();
+
 
             }
         });
@@ -95,8 +105,8 @@ public class LoginTabFragment extends Fragment {
                 conn.setDoInput(true);
 
                 JSONObject jsonParam = new JSONObject();
-                jsonParam.put("userEmail", email.getText().toString());
-                jsonParam.put("userPassword", pass.getText().toString());
+                jsonParam.put("email", email.getText().toString());
+                jsonParam.put("password", pass.getText().toString());
 
                 DataOutputStream os = new DataOutputStream(conn.getOutputStream());
                 os.writeBytes(jsonParam.toString());
@@ -111,6 +121,8 @@ public class LoginTabFragment extends Fragment {
                     while ((line = bufferedReader.readLine()) != null) {
                         response += line;
                     }
+                }else if(responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR){
+                    Toast.makeText(getActivity(), "Unknown internal failure", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

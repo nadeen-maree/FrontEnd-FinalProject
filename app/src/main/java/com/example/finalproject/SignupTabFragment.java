@@ -84,7 +84,7 @@ public class SignupTabFragment extends Fragment {
                 editor.putString("userConfirmPassword", userConfirmPassword).apply();
 
                 SignupTabFragment.HttpPostTask task = new SignupTabFragment.HttpPostTask();
-                task.execute("http://www.example.com/api/signup", userEmail, userPassword,userMobileNumber, userConfirmPassword);
+                task.execute("http://10.0.2.2:8181/users/login", userEmail, userPassword,userMobileNumber, userConfirmPassword);
             }
         });
 
@@ -103,10 +103,10 @@ public class SignupTabFragment extends Fragment {
                 conn.setDoInput(true);
 
                 JSONObject jsonParam = new JSONObject();
-                jsonParam.put("userEmail", email.getText().toString());
-                jsonParam.put("userPassword", pass.getText().toString());
-                jsonParam.put("userMobileNumber", mobileNum.getText().toString());
-                jsonParam.put("userConfirmPassword", confirmPass.getText().toString());
+                jsonParam.put("email", email.getText().toString());
+                jsonParam.put("password", pass.getText().toString());
+                jsonParam.put("mobileNumber", mobileNum.getText().toString());
+                jsonParam.put("confirmPassword", confirmPass.getText().toString());
 
                 DataOutputStream os = new DataOutputStream(conn.getOutputStream());
                 os.writeBytes(jsonParam.toString());
@@ -121,6 +121,8 @@ public class SignupTabFragment extends Fragment {
                     while ((line = bufferedReader.readLine()) != null) {
                         response += line;
                     }
+                }else if(responseCode == HttpURLConnection.HTTP_INTERNAL_ERROR){
+                    Toast.makeText(getActivity(), "Unknown internal failure", Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

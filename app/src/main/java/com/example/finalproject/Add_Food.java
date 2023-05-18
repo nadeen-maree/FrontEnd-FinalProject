@@ -1,5 +1,7 @@
 package com.example.finalproject;
 
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -163,6 +165,10 @@ public class Add_Food extends AppCompatActivity {
                 // Create an instance of the HttpPostTask and execute it
                 HttpPostTask httpPostTask = new HttpPostTask();
                 httpPostTask.execute();
+
+                // Create an instance of the HttpGetTask and execute it
+                HttpGetTask httpGetTask = new HttpGetTask();
+                httpGetTask.execute();
             }
 
             @Override
@@ -199,12 +205,15 @@ public class Add_Food extends AppCompatActivity {
         return intPercentage;
     }
 
+    SharedPreferences sharedPreferences = Add_Food.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+    String email = sharedPreferences.getString("email", "");
+
     private class HttpPostTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
             // Perform the HTTP POST request here
-            String urlStr = "http://example.com/api/food";
+            String urlStr = "http://10.0.2.2:8181/addfood?email" + email;
             try {
                 URL url = new URL(urlStr);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -236,11 +245,10 @@ public class Add_Food extends AppCompatActivity {
                         response.append(line);
                     }
                     reader.close();
-
                     // Return the response as a string
                     return response.toString();
                 } else {
-                    // Error handling for unsuccessful response
+                    Toast.makeText(Add_Food.this, "Unknown internal failure", Toast.LENGTH_SHORT).show();
                     return null;
                 }
             } catch (Exception e) {
@@ -253,11 +261,65 @@ public class Add_Food extends AppCompatActivity {
         protected void onPostExecute(String result) {
             if (result != null) {
                 // Handle the response from the server
-                Toast.makeText(Add_Food.this, "Response: " + result, Toast.LENGTH_SHORT).show();
+                Toast.makeText(Add_Food.this, "POST Response: " + result, Toast.LENGTH_SHORT).show();
             } else {
                 // Error handling for unsuccessful response
-                Toast.makeText(Add_Food.this, "An error occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(Add_Food.this, "POST request failed", Toast.LENGTH_SHORT).show();
             }
         }
     }
+    private class HttpGetTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+            protected String doInBackground(Void... params) {
+                // Perform the HTTP GET request here
+                String urlStr = "http://10.0.2.2:8181/addfood?email" + email +
+                        "target=" + totalCalories +
+                        "percentage=" + percentage(String.valueOf(totalCalories)) +
+                        "breakfast=" + breakfastEditText.getText().toString() +
+                        "lunch=" + lunchEditText.getText().toString() +
+                        "dinner=" + dinnerEditText.getText().toString() +
+                        "snack=" + snackEditText.getText().toString();
+
+                try {
+                    URL url = new URL(urlStr);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("GET");
+                    conn.setRequestProperty("Content-Type", "application/json");
+
+                    // Read the response from the server
+                    int responseCode = conn.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        // Successful response
+                        InputStream inputStream = conn.getInputStream();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            response.append(line);
+                        }
+                        reader.close();
+                        // Return the response as a string
+                        return response.toString();
+                    } else {
+                        Toast.makeText(Add_Food.this, "Unknown internal failure", Toast.LENGTH_SHORT).show();
+                        return null;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                if (result != null) {
+                    // Handle the response from the server
+                    Toast.makeText(Add_Food.this, "GET Response: " + result, Toast.LENGTH_SHORT).show();
+                } else {
+                    // Error handling for unsuccessful response
+                    Toast.makeText(Add_Food.this, "GET request failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
 }
