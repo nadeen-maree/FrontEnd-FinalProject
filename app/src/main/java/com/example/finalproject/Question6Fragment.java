@@ -2,6 +2,8 @@ package com.example.finalproject;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,6 +46,7 @@ public class Question6Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question6, container, false);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
         chestCheckbox = view.findViewById(R.id.chest_checkbox);
         backCheckbox = view.findViewById(R.id.back_checkbox);
@@ -110,72 +113,75 @@ public class Question6Fragment extends Fragment {
                 transaction.addToBackStack(null);
                 transaction.commit();
 
-                new HttpPostTask().execute(selectedFocusZonesString);
-
+                String email = sharedPreferences.getString("email", "");
+                // Perform the HTTP POST request in the activity
+                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
+                String postData = "focusZones=" + selectedFocusZonesString;
+                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
             }
         });
         return view;
     }
 
-    private class HttpPostTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            String url = params[0];
-            String selectedFocusZonesString = params[1];
-
-            try {
-                URL obj = new URL(url);
-                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-                // Set the request method and headers
-                con.setRequestMethod("POST");
-                con.setRequestProperty("Content-Type", "application/json");
-
-                // Create the request body
-                JSONObject requestBody = new JSONObject();
-                requestBody.put("selectedFocusZones", selectedFocusZonesString);
-
-                // Convert the request body to a byte array and set it as the request entity
-                byte[] requestBodyBytes = requestBody.toString().getBytes("UTF-8");
-                con.setDoOutput(true);
-                con.setFixedLengthStreamingMode(requestBodyBytes.length);
-                OutputStream outputStream = con.getOutputStream();
-                outputStream.write(requestBodyBytes);
-                outputStream.flush();
-                outputStream.close();
-
-                // Read the response from the server
-                int responseCode = con.getResponseCode();
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String inputLine;
-                StringBuilder response = new StringBuilder();
-                while ((inputLine = in.readLine()) != null) {
-                    response.append(inputLine);
-                }
-                in.close();
-
-                // Return the response from the server
-                return response.toString();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            super.onPostExecute(response);
-
-            if (response != null) {
-                // Handle the response from the server
-                Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
-            } else {
-                // Handle the error
-                Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-
-    }
+//    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//        @Override
+//        protected String doInBackground(String... params) {
+//            String url = params[0];
+//            String selectedFocusZonesString = params[1];
+//
+//            try {
+//                URL obj = new URL(url);
+//                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+//
+//                // Set the request method and headers
+//                con.setRequestMethod("POST");
+//                con.setRequestProperty("Content-Type", "application/json");
+//
+//                // Create the request body
+//                JSONObject requestBody = new JSONObject();
+//                requestBody.put("selectedFocusZones", selectedFocusZonesString);
+//
+//                // Convert the request body to a byte array and set it as the request entity
+//                byte[] requestBodyBytes = requestBody.toString().getBytes("UTF-8");
+//                con.setDoOutput(true);
+//                con.setFixedLengthStreamingMode(requestBodyBytes.length);
+//                OutputStream outputStream = con.getOutputStream();
+//                outputStream.write(requestBodyBytes);
+//                outputStream.flush();
+//                outputStream.close();
+//
+//                // Read the response from the server
+//                int responseCode = con.getResponseCode();
+//                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+//                String inputLine;
+//                StringBuilder response = new StringBuilder();
+//                while ((inputLine = in.readLine()) != null) {
+//                    response.append(inputLine);
+//                }
+//                in.close();
+//
+//                // Return the response from the server
+//                return response.toString();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String response) {
+//            super.onPostExecute(response);
+//
+//            if (response != null) {
+//                // Handle the response from the server
+//                Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
+//            } else {
+//                // Handle the error
+//                Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//
+//
+//    }
 }

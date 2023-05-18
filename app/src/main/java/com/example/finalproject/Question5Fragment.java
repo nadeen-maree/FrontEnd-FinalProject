@@ -2,6 +2,8 @@ package com.example.finalproject;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,6 +41,7 @@ public class Question5Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question5, container, false);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
         fitnessLevelRadioGroup = view.findViewById(R.id.fitness_level_radio_group);
         nextButton5 = view.findViewById(R.id.next5_button);
@@ -73,76 +76,78 @@ public class Question5Fragment extends Fragment {
                 transaction.addToBackStack(null);
                 transaction.commit();
 
-                new Question5Fragment.HttpPostTask().execute(fitnessLevel);
+                String email = sharedPreferences.getString("email", "");
+                // Perform the HTTP POST request in the activity
+                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
+                String postData = "fitnessLevel=" + fitnessLevel;
+                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
             }
         });
 
         return view;
     }
 
-    private class HttpPostTask extends AsyncTask<String, Void, String> {
-
-        private String fitnessLevel;
-        String response = "";
-        @Override
-        protected String doInBackground(String... params) {
-            fitnessLevel = params[0];
-            String urlStr = "http://example.com/api/fitnessLevel";
-            String postData = "fitnessLevel=" + fitnessLevel;
-
-            try {
-                URL url = new URL(urlStr);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
-
-                // Write POST data to request body
-                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-                os.writeBytes(postData);
-                os.flush();
-                os.close();
-
-                // Read response from server
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    InputStream inputStream = conn.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        response += line;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                try {
-                    JSONObject json = new JSONObject(result);
-
-                    // Handle response from server
-                    // ...
-
-                    // Navigate to next question
-                    Bundle bundle = new Bundle();
-                    bundle.putString("fitnessLevel", fitnessLevel);
-                    Question6Fragment question6Fragment = new Question6Fragment();
-                    question6Fragment.setArguments(bundle);
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, question6Fragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//
+//        private String fitnessLevel;
+//        String response = "";
+//        @Override
+//        protected String doInBackground(String... params) {
+//            fitnessLevel = params[0];
+//            String urlStr = "http://example.com/api/fitnessLevel";
+//            String postData = "fitnessLevel=" + fitnessLevel;
+//
+//            try {
+//                URL url = new URL(urlStr);
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setRequestMethod("POST");
+//                conn.setDoOutput(true);
+//                conn.setDoInput(true);
+//                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+//                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
+//
+//                // Write POST data to request body
+//                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+//                os.writeBytes(postData);
+//                os.flush();
+//                os.close();
+//
+//                // Read response from server
+//                int responseCode = conn.getResponseCode();
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    InputStream inputStream = conn.getInputStream();
+//                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//                    String line;
+//                    while ((line = bufferedReader.readLine()) != null) {
+//                        response += line;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return response;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            if (result != null) {
+//                try {
+//                    JSONObject json = new JSONObject(result);
+//
+//
+//                    // Navigate to next question
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("fitnessLevel", fitnessLevel);
+//                    Question6Fragment question6Fragment = new Question6Fragment();
+//                    question6Fragment.setArguments(bundle);
+//                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                    transaction.replace(R.id.fragment_container, question6Fragment);
+//                    transaction.addToBackStack(null);
+//                    transaction.commit();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 }

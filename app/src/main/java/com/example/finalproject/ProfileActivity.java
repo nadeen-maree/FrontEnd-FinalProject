@@ -1,19 +1,32 @@
 package com.example.finalproject;
 
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,12 +43,16 @@ public class ProfileActivity extends AppCompatActivity {
     private Context mContext;
     private static final int REQUEST_CODE_EDIT_PROFILE = 1;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        SharedPreferences sharedPreferences = ProfileActivity.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
+        String GET_PROFILE_URL = "http://10.0.2.2:8181/questionnaire?email" + email;
+
+        new HttpGetTask().execute(GET_PROFILE_URL);
 
         mContext = this; // initialize the context
         SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
@@ -200,5 +217,81 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    private class HttpGetTask extends AsyncTask<String, Void, String> {
 
+        protected String doInBackground(String... params) {
+            String urlStr = params[0];
+            String response = "";
+
+            try {
+                URL url = new URL(urlStr);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+
+                // Read response from server
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    InputStream inputStream = conn.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        response += line;
+                    }
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Unknown internal failure", Toast.LENGTH_SHORT).show();
+                    return null;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return response;
+        }
+
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                try {
+                    // Parse the JSON response
+                    JSONObject json = new JSONObject(result);
+
+                    // Extract the profile data from the JSON
+                    String name = json.getString("name");
+                    String date = json.getString("date");
+                    String gender = json.getString("gender");
+                    String dietType = json.getString("dietType");
+                    String fitnessLevel = json.getString("fitnessLevel");
+                    String focusZones = json.getString("focusZones");
+                    String physicalLimitations = json.getString("physicalLimitations");
+                    String startingWeight = json.getString("startingWeight");
+                    String targetWeight = json.getString("targetWeight");
+                    String height = json.getString("height");
+                    String imageUrl = json.getString("image");
+
+                    // Extract other profile fields as needed
+
+                    // Update the UI with the profile data
+                    profileNameTextView.setText(name);
+                    profileDateTextView.setText(date);
+                    profileGenderTextView.setText(gender);
+                    profileDietTypeTextView.setText(dietType);
+                    profileFitnessLevelTextView.setText(fitnessLevel);
+                    profileFocusZonesTextView.setText(focusZones);
+                    profilePhysicalLimitationsTextView.setText(physicalLimitations);
+                    profileStartingWeightTextView.setText(startingWeight);
+                    profileTargetWeightTextView.setText(targetWeight);
+                    profileHeightTextView.setText(height);
+
+                    if (imageUrl != null) {
+                        Picasso.get().load(Uri.parse(imageUrl)).into(profileImage);
+                    } else {
+                        // Set a default image if the image URI is not available
+                        profileImage.setImageResource(R.drawable.ic_launcher_foreground);
+                    }
+                    // Update other profile fields as needed
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }

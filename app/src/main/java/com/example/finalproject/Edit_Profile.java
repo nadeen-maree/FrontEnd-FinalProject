@@ -1,5 +1,7 @@
 package com.example.finalproject;
 
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
@@ -22,6 +24,7 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -117,7 +120,6 @@ public class Edit_Profile extends AppCompatActivity {
         heightPicker = findViewById(R.id.height_picker);
         heightButton = findViewById(R.id.height_button);
         saveButton = findViewById(R.id.save_button);
-
 
         personal_plan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -588,6 +590,7 @@ public class Edit_Profile extends AppCompatActivity {
         heightPickerContainer.setVisibility(View.GONE);
     }
 
+
     private void onSaveButtonClick() {
         SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -661,8 +664,11 @@ public class Edit_Profile extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
         // Create an instance of HttpPostTask and execute it
-        String url = "http://example.com/api/edit-profile";
+        SharedPreferences sharedPreferences = Edit_Profile.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
+        String url = "http://10.0.2.2:8181/questionnaire?email" + email;
         HttpPostTask task = new HttpPostTask(url, requestBody.toString(), new HttpPostTask.OnHttpPostTaskCompleted() {
             @Override
             public void onHttpPostTaskCompleted(String response) {
@@ -673,7 +679,7 @@ public class Edit_Profile extends AppCompatActivity {
         });
         task.execute();
 
-        setResult(RESULT_OK, intent);
+        setResult(HttpURLConnection.HTTP_OK, intent);
         finish();
     }
 
@@ -706,14 +712,18 @@ public class Edit_Profile extends AppCompatActivity {
                 outputStream.close();
 
                 // Read the response
-                StringBuilder response = new StringBuilder();
-                reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    StringBuilder response = new StringBuilder();
+                    reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+
+                    return response.toString();
                 }
 
-                return response.toString();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
@@ -742,6 +752,7 @@ public class Edit_Profile extends AppCompatActivity {
         public interface OnHttpPostTaskCompleted {
             void onHttpPostTaskCompleted(String response);
         }
+
     }
 
 

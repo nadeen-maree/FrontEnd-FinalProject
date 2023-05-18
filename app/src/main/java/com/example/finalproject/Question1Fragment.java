@@ -2,11 +2,15 @@ package com.example.finalproject;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -34,6 +38,8 @@ public class Question1Fragment extends Fragment {
     private EditText nameEditText;
     FloatingActionButton nextButton;
 
+    //private HttpRequestListener httpRequestListener;
+
     public Question1Fragment() {
         // Required empty public constructor
     }
@@ -45,6 +51,7 @@ public class Question1Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question1, container, false);
 
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
         nameEditText = view.findViewById(R.id.user_name_editText);
         nextButton = view.findViewById(R.id.next_button);
@@ -68,56 +75,80 @@ public class Question1Fragment extends Fragment {
                     transaction.commit();
                 }
 
-                Question1Fragment.HttpPostTask task = new Question1Fragment.HttpPostTask();
-                task.execute("http://www.example.com/api/name", name);
+                String email = sharedPreferences.getString("email", "");
+                // Perform the HTTP POST request in the activity
+                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
+                String postData = "name=" + name;
+                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
             }
         });
         return view;
     }
 
-    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//
+//        protected String doInBackground(String... params) {
+//            String response = "";
+//            try {
+//                URL url = new URL(params[0]);
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setRequestMethod("POST");
+//                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+//                conn.setDoOutput(true);
+//                conn.setDoInput(true);
+//
+//                JSONObject jsonParam = new JSONObject();
+//                jsonParam.put("name", nameEditText.getText().toString());
+//
+//                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+//                os.writeBytes(jsonParam.toString());
+//                os.flush();
+//                os.close();
+//
+//                int responseCode = conn.getResponseCode();
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    InputStream inputStream = conn.getInputStream();
+//                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//                    String line;
+//                    while ((line = bufferedReader.readLine()) != null) {
+//                        response += line;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return response;
+//        }
+//
+//        protected void onPostExecute(String result) {
+//                try {
+//                    JSONObject jsonResponse = new JSONObject(result);
+//                    String message = jsonResponse.getString("message");
+//                    Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+//
+//                    // Call the interface method to notify the Activity
+//                    if (httpRequestListener != null) {
+//                        httpRequestListener.onHttpPostComplete(result);
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//    }
+//    public interface HttpRequestListener {
+//        void onHttpPostComplete(String result);
+//        void onHttpGetComplete(String result);
+//    }
+//
+//    @Override
+//    public void onAttach(@NonNull Context context) {
+//        super.onAttach(context);
+//        try {
+//            httpRequestListener = (HttpRequestListener) context;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(context.toString() + " must implement HttpRequestListener");
+//        }
+//    }
 
-        protected String doInBackground(String... params) {
-            String response = "";
-            try {
-                URL url = new URL(params[0]);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
 
-                JSONObject jsonParam = new JSONObject();
-                jsonParam.put("name", nameEditText.getText().toString());
-
-                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-                os.writeBytes(jsonParam.toString());
-                os.flush();
-                os.close();
-
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    InputStream inputStream = conn.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        response += line;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
-
-        protected void onPostExecute(String result) {
-            try {
-                JSONObject jsonResponse = new JSONObject(result);
-                String message = jsonResponse.getString("message");
-                Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

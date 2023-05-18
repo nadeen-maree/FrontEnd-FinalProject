@@ -2,6 +2,8 @@ package com.example.finalproject;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -46,6 +48,7 @@ public class Question8Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question8, container, false);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
         //sharedPreferences = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE);
 
@@ -96,79 +99,81 @@ public class Question8Fragment extends Fragment {
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);
 
-                // Create an instance of the HttpPostTask and execute it
-                HttpPostTask httpPostTask = new HttpPostTask();
-                httpPostTask.execute(startingWeightString, targetWeightString, heightString);
+                String email = sharedPreferences.getString("email", "");
+                // Perform the HTTP POST request in the activity
+                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
+                String postData = "startingWeight=" + startingWeightString + "targetWeight" + targetWeightString + "height" + heightString;
+                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
             }
         });
 
         return view;
     }
 
-    private class HttpPostTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... params) {
-            String startingWeight = params[0];
-            String targetWeight = params[1];
-            String height = params[2];
-            String urlStr = "http://example.com/api/questionnaire";
-
-            try {
-                URL url = new URL(urlStr);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json");
-                conn.setDoOutput(true);
-
-                // Create the JSON request body
-                JSONObject requestBody = new JSONObject();
-                requestBody.put("starting_weight", startingWeight);
-                requestBody.put("target_weight", targetWeight);
-                requestBody.put("height", height);
-
-                // Write the JSON request body to the request stream
-                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-                writer.write(requestBody.toString());
-                writer.flush();
-
-                // Read the response from the server
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    // Successful response
-                    InputStream inputStream = conn.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                    StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
-                    }
-                    reader.close();
-
-                    // Return the response as a string
-                    return response.toString();
-                } else {
-                    // Error handling for unsuccessful response
-                    return null;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                // Handle the response from the server
-                Toast.makeText(getActivity(), "Response: " + result, Toast.LENGTH_SHORT).show();
-            } else {
-                // Error handling for unsuccessful response
-                Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
-            }
-
-            // Do something with the questionnaire data, e.g. start a new activity
-
-        }
-    }
+//    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//            String startingWeight = params[0];
+//            String targetWeight = params[1];
+//            String height = params[2];
+//            String urlStr = "http://example.com/api/questionnaire";
+//
+//            try {
+//                URL url = new URL(urlStr);
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setRequestMethod("POST");
+//                conn.setRequestProperty("Content-Type", "application/json");
+//                conn.setDoOutput(true);
+//
+//                // Create the JSON request body
+//                JSONObject requestBody = new JSONObject();
+//                requestBody.put("starting_weight", startingWeight);
+//                requestBody.put("target_weight", targetWeight);
+//                requestBody.put("height", height);
+//
+//                // Write the JSON request body to the request stream
+//                OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+//                writer.write(requestBody.toString());
+//                writer.flush();
+//
+//                // Read the response from the server
+//                int responseCode = conn.getResponseCode();
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    // Successful response
+//                    InputStream inputStream = conn.getInputStream();
+//                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+//                    StringBuilder response = new StringBuilder();
+//                    String line;
+//                    while ((line = reader.readLine()) != null) {
+//                        response.append(line);
+//                    }
+//                    reader.close();
+//
+//                    // Return the response as a string
+//                    return response.toString();
+//                } else {
+//                    // Error handling for unsuccessful response
+//                    return null;
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                return null;
+//            }
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            if (result != null) {
+//                // Handle the response from the server
+//                Toast.makeText(getActivity(), "Response: " + result, Toast.LENGTH_SHORT).show();
+//            } else {
+//                // Error handling for unsuccessful response
+//                Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            // Do something with the questionnaire data, e.g. start a new activity
+//
+//        }
+//    }
 }

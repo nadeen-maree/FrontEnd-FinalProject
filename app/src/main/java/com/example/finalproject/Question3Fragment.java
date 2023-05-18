@@ -2,6 +2,8 @@ package com.example.finalproject;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -45,6 +47,7 @@ public class Question3Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question3, container, false);
 
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
         genderRadioGroup = view.findViewById(R.id.gender_radio_group);
         maleRadioButton = view.findViewById(R.id.male_radio_button);
@@ -81,75 +84,81 @@ public class Question3Fragment extends Fragment {
                 transaction.addToBackStack(null);
                 transaction.commit();
 
-                new HttpPostTask().execute(gender);
+                String email = sharedPreferences.getString("email", "");
+                // Perform the HTTP POST request in the activity
+                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
+                String postData = "gender=" + gender;
+                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
             }
         });
 
         return view;
     }
-    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//
+//        private String gender;
+//        String response = "";
+//        @Override
+//        protected String doInBackground(String... params) {
+//            gender = params[0];
+//            String urlStr = "http://example.com/api/gender";
+//            String postData = "gender=" + gender;
+//
+//            try {
+//                URL url = new URL(urlStr);
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setRequestMethod("POST");
+//                conn.setDoOutput(true);
+//                conn.setDoInput(true);
+//                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+//                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
+//
+//                // Write POST data to request body
+//                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+//                os.writeBytes(postData);
+//                os.flush();
+//                os.close();
+//
+//                // Read response from server
+//                int responseCode = conn.getResponseCode();
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    InputStream inputStream = conn.getInputStream();
+//                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//                    String line;
+//                    while ((line = bufferedReader.readLine()) != null) {
+//                        response += line;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return response;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            if (result != null) {
+//                try {
+//                    JSONObject json = new JSONObject(result);
+//
+//                    // Handle response from server
+//                    // ...
+//
+//                    // Navigate to next question
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("gender", gender);
+//                    Question4Fragment question4Fragment = new Question4Fragment();
+//                    question4Fragment.setArguments(bundle);
+//                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                    transaction.replace(R.id.fragment_container, question4Fragment);
+//                    transaction.addToBackStack(null);
+//                    transaction.commit();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+//
 
-        private String gender;
-        String response = "";
-        @Override
-        protected String doInBackground(String... params) {
-            gender = params[0];
-            String urlStr = "http://example.com/api/gender";
-            String postData = "gender=" + gender;
-
-            try {
-                URL url = new URL(urlStr);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
-
-                // Write POST data to request body
-                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-                os.writeBytes(postData);
-                os.flush();
-                os.close();
-
-                // Read response from server
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    InputStream inputStream = conn.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        response += line;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                try {
-                    JSONObject json = new JSONObject(result);
-
-                    // Handle response from server
-                    // ...
-
-                    // Navigate to next question
-                    Bundle bundle = new Bundle();
-                    bundle.putString("gender", gender);
-                    Question4Fragment question4Fragment = new Question4Fragment();
-                    question4Fragment.setArguments(bundle);
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, question4Fragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 }

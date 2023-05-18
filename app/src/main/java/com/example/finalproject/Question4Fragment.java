@@ -2,6 +2,8 @@ package com.example.finalproject;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -45,6 +47,8 @@ public class Question4Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question4, container, false);
 
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+
 
         dietTypeRadioGroup = view.findViewById(R.id.diet_type__radio_group);
         traditionalRadioButton = view.findViewById(R.id.traditional_radio_button);
@@ -81,75 +85,79 @@ public class Question4Fragment extends Fragment {
                 transaction.addToBackStack(null);
                 transaction.commit();
 
-                new Question4Fragment.HttpPostTask().execute(dietType);
+                String email = sharedPreferences.getString("email", "");
+                // Perform the HTTP POST request in the activity
+                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
+                String postData = "dietType=" + dietType;
+                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
             }
         });
 
         return view;
     }
-    private class HttpPostTask extends AsyncTask<String, Void, String> {
-
-        private String dietType;
-        String response = "";
-        @Override
-        protected String doInBackground(String... params) {
-            dietType = params[0];
-            String urlStr = "http://example.com/api/dietType";
-            String postData = "dietType=" + dietType;
-
-            try {
-                URL url = new URL(urlStr);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
-
-                // Write POST data to request body
-                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-                os.writeBytes(postData);
-                os.flush();
-                os.close();
-
-                // Read response from server
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    InputStream inputStream = conn.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        response += line;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return response;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                try {
-                    JSONObject json = new JSONObject(result);
-
-                    // Handle response from server
-                    // ...
-
-                    // Navigate to next question
-                    Bundle bundle = new Bundle();
-                    bundle.putString("dietType", dietType);
-                    Question5Fragment question5Fragment = new Question5Fragment();
-                    question5Fragment.setArguments(bundle);
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, question5Fragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//
+//        private String dietType;
+//        String response = "";
+//        @Override
+//        protected String doInBackground(String... params) {
+//            dietType = params[0];
+//            String urlStr = "http://example.com/api/dietType";
+//            String postData = "dietType=" + dietType;
+//
+//            try {
+//                URL url = new URL(urlStr);
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setRequestMethod("POST");
+//                conn.setDoOutput(true);
+//                conn.setDoInput(true);
+//                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+//                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
+//
+//                // Write POST data to request body
+//                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+//                os.writeBytes(postData);
+//                os.flush();
+//                os.close();
+//
+//                // Read response from server
+//                int responseCode = conn.getResponseCode();
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    InputStream inputStream = conn.getInputStream();
+//                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//                    String line;
+//                    while ((line = bufferedReader.readLine()) != null) {
+//                        response += line;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return response;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            if (result != null) {
+//                try {
+//                    JSONObject json = new JSONObject(result);
+//
+//                    // Handle response from server
+//                    // ...
+//
+//                    // Navigate to next question
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("dietType", dietType);
+//                    Question5Fragment question5Fragment = new Question5Fragment();
+//                    question5Fragment.setArguments(bundle);
+//                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                    transaction.replace(R.id.fragment_container, question5Fragment);
+//                    transaction.addToBackStack(null);
+//                    transaction.commit();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 }
