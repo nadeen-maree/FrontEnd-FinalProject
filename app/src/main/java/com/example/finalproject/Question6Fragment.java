@@ -30,12 +30,17 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Response;
+
 
 public class Question6Fragment extends Fragment {
 
 
     CheckBox chestCheckbox, backCheckbox, armsCheckbox, legsCheckbox, absCheckbox;
     private FloatingActionButton nextButton6;
+
+    private ApiService apiService;
 
     public Question6Fragment() {
         // Required empty public constructor
@@ -47,6 +52,8 @@ public class Question6Fragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question6, container, false);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+
+        apiService = ApiService.getInstance();
 
         chestCheckbox = view.findViewById(R.id.chest_checkbox);
         backCheckbox = view.findViewById(R.id.back_checkbox);
@@ -95,31 +102,44 @@ public class Question6Fragment extends Fragment {
                 // Create a string from the list of selected focus zones
                 String selectedFocusZonesString = TextUtils.join(", ", selectedFocusZones);
 
-                SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
-                editor.putString("FocusZones", selectedFocusZonesString);
-                editor.apply();
+                apiService.submitFocusZones(selectedFocusZonesString, new ApiService.DataSubmitCallback() {
+                    @Override
+                    public void onSuccess(ResponseModel response) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("selectedFocusZones", selectedFocusZonesString);
+                        Question7Fragment question7Fragment = new Question7Fragment();
+                        question7Fragment.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, question7Fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
 
-                // Create a bundle and add the selected focus zones to it
-                Bundle bundle = new Bundle();
-                bundle.putString("selected_focus_zones", selectedFocusZonesString);
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }
 
-                // Create a new instance of the next fragment and set its arguments
-                Question7Fragment question7Fragment = new Question7Fragment();
-                question7Fragment.setArguments(bundle);
+                    @Override
+                    public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                        if (response.isSuccessful()) {
+                            ResponseModel data = response.body();
+                            onSuccess(data);
+                        } else {
+                            String errorMessage = "Error: " + response.code();
+                            onError(errorMessage);
+                        }
+                    }
 
-                // Replace the current fragment with the next one
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, question7Fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-
-                String email = sharedPreferences.getString("email", "");
-                // Perform the HTTP POST request in the activity
-                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-                String postData = "focusZones=" + selectedFocusZonesString;
-                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
+                    @Override
+                    public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                        String errorMessage = "Request failed: " + throwable.getMessage();
+                        onError(errorMessage);
+                    }
+                });
             }
         });
+
         return view;
     }
 

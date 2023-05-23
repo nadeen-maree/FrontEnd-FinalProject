@@ -27,10 +27,15 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import retrofit2.Call;
+import retrofit2.Response;
+
 public class Question5Fragment extends Fragment {
 
     private RadioGroup fitnessLevelRadioGroup;
     private FloatingActionButton nextButton5;
+
+    private ApiService apiService;
 
     public Question5Fragment() {
         // Required empty public constructor
@@ -42,6 +47,8 @@ public class Question5Fragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question5, container, false);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+
+        apiService = ApiService.getInstance();
 
         fitnessLevelRadioGroup = view.findViewById(R.id.fitness_level_radio_group);
         nextButton5 = view.findViewById(R.id.next5_button);
@@ -63,30 +70,47 @@ public class Question5Fragment extends Fragment {
                 Toast.makeText(getContext(), "Please select a fitness level", Toast.LENGTH_SHORT).show();
                 return;
             }
-                SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
-                editor.putString("fitnessLevel", fitnessLevel);
-                editor.apply();
+                String finalFitnessLevel = fitnessLevel;
+                apiService.submitFitnessLevel(fitnessLevel, new ApiService.DataSubmitCallback() {
+                    @Override
+                    public void onSuccess(ResponseModel response) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("fitnessLevel", finalFitnessLevel);
+                        Question6Fragment question6Fragment = new Question6Fragment();
+                        question6Fragment.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, question6Fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
 
-                Bundle bundle = new Bundle();
-                bundle.putString("fitnessLevel", fitnessLevel);
-                Question6Fragment question6Fragment = new Question6Fragment();
-                question6Fragment.setArguments(bundle);
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, question6Fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }
 
-                String email = sharedPreferences.getString("email", "");
-                // Perform the HTTP POST request in the activity
-                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-                String postData = "fitnessLevel=" + fitnessLevel;
-                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
+                    @Override
+                    public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                        if (response.isSuccessful()) {
+                            ResponseModel data = response.body();
+                            onSuccess(data);
+                        } else {
+                            String errorMessage = "Error: " + response.code();
+                            onError(errorMessage);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                        String errorMessage = "Request failed: " + throwable.getMessage();
+                        onError(errorMessage);
+                    }
+                });
             }
         });
 
         return view;
     }
-
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {
 //
 //        private String fitnessLevel;

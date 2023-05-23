@@ -31,11 +31,16 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Response;
+
 
 public class Question7Fragment extends Fragment {
 
     CheckBox noneCheckbox, kneePainCheckbox, backPainCheckbox, limitedMobilityCheckbox, OtherCheckbox;
     private FloatingActionButton nextButton7;
+
+    private ApiService apiService;
 
     public Question7Fragment() {
         // Required empty public constructor
@@ -47,6 +52,8 @@ public class Question7Fragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question7, container, false);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+
+        apiService = ApiService.getInstance();
 
         noneCheckbox = view.findViewById(R.id.none_checkbox);
         kneePainCheckbox = view.findViewById(R.id.knee_pain_checkbox);
@@ -162,31 +169,44 @@ public class Question7Fragment extends Fragment {
                 // Create a string from the list of selected physical limitations
                 String selectedPhysicalLimitationsString = TextUtils.join(", ", selectedPhysicalLimitations);
 
-                SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
-                editor.putString("physicalLimitations", selectedPhysicalLimitationsString);
-                editor.apply();
+                apiService.submitPhysicalLimitations(selectedPhysicalLimitationsString, new ApiService.DataSubmitCallback() {
+                    @Override
+                    public void onSuccess(ResponseModel response) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("selectedPhysicalLimitations", selectedPhysicalLimitationsString);
+                        Question8Fragment question8Fragment = new Question8Fragment();
+                        question8Fragment.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, question8Fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
 
-                // Create a bundle and add the selected physical limitations to it
-                Bundle bundle = new Bundle();
-                bundle.putString("selected_physical_limitations", selectedPhysicalLimitationsString);
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }
 
-                // Create a new instance of the next fragment and set its arguments
-                Question8Fragment question8Fragment = new Question8Fragment();
-                question8Fragment.setArguments(bundle);
+                    @Override
+                    public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                        if (response.isSuccessful()) {
+                            ResponseModel data = response.body();
+                            onSuccess(data);
+                        } else {
+                            String errorMessage = "Error: " + response.code();
+                            onError(errorMessage);
+                        }
+                    }
 
-                // Replace the current fragment with the next one
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, question8Fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-
-                String email = sharedPreferences.getString("email", "");
-                // Perform the HTTP POST request in the activity
-                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-                String postData = "physicalLimitation=" + selectedPhysicalLimitations;
-                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
+                    @Override
+                    public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                        String errorMessage = "Request failed: " + throwable.getMessage();
+                        onError(errorMessage);
+                    }
+                });
             }
         });
+
         return view;
     }
 

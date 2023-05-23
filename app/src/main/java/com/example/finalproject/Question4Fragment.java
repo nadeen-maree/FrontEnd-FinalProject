@@ -30,11 +30,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import retrofit2.Call;
+import retrofit2.Response;
+
 public class Question4Fragment extends Fragment {
 
     private RadioGroup dietTypeRadioGroup;
     private RadioButton traditionalRadioButton, vegetarianRadioButton, ketoRadioButton;
     private FloatingActionButton nextButton4;
+
+    private ApiService apiService;
 
     public Question4Fragment() {
         // Required empty public constructor
@@ -49,6 +54,7 @@ public class Question4Fragment extends Fragment {
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
+        apiService = ApiService.getInstance();
 
         dietTypeRadioGroup = view.findViewById(R.id.diet_type__radio_group);
         traditionalRadioButton = view.findViewById(R.id.traditional_radio_button);
@@ -73,23 +79,42 @@ public class Question4Fragment extends Fragment {
                     Toast.makeText(getContext(), "Please select a diet type", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                editor.putString("dietType", dietType).apply();
+                String finalDietType = dietType;
+                apiService.submitDietType(dietType, new ApiService.DataSubmitCallback() {
+                    @Override
+                    public void onSuccess(ResponseModel response) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("dietType", finalDietType);
+                        Question5Fragment question5Fragment = new Question5Fragment();
+                        question5Fragment.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, question5Fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
 
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }
 
-                Bundle bundle = new Bundle();
-                bundle.putString("dietType", dietType);
-                Question5Fragment question5Fragment = new Question5Fragment();
-                question5Fragment.setArguments(bundle);
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, question5Fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                    @Override
+                    public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                        if (response.isSuccessful()) {
+                            ResponseModel data = response.body();
+                            onSuccess(data);
+                        } else {
+                            String errorMessage = "Error: " + response.code();
+                            onError(errorMessage);
+                        }
+                    }
 
-                String email = sharedPreferences.getString("email", "");
-                // Perform the HTTP POST request in the activity
-                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-                String postData = "dietType=" + dietType;
-                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
+                    @Override
+                    public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                        String errorMessage = "Request failed: " + throwable.getMessage();
+                        onError(errorMessage);
+                    }
+                });
             }
         });
 

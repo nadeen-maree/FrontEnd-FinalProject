@@ -28,11 +28,17 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import retrofit2.Call;
+import retrofit2.Response;
+
 
 public class Question8Fragment extends Fragment {
 
     private NumberPicker startingWeightPicker, targetWeightPicker, heightPicker;
     private FloatingActionButton finishButton;
+
+    private ApiService apiService;
+
     //private SharedPreferences sharedPreferences;
 
 
@@ -49,6 +55,8 @@ public class Question8Fragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question8, container, false);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+
+        apiService = ApiService.getInstance();
 
         //sharedPreferences = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE);
 
@@ -90,20 +98,39 @@ public class Question8Fragment extends Fragment {
                 String startingWeightString = Integer.toString(startingWeight);
                 String targetWeightString = Integer.toString(targetWeight);
                 String heightString = Integer.toString(height);
-                SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
-                editor.putString("starting_weight", startingWeightString);
-                editor.putString("target_weight", targetWeightString);
-                editor.putString("height", heightString);
-                editor.apply();
+                apiService.submitUserDetails(startingWeightString, targetWeightString, heightString, new ApiService.DataSubmitCallback() {
+                    @Override
+                    public void onSuccess(ResponseModel response) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("startingWeight", startingWeightString);
+                        bundle.putString("targetWeight", targetWeightString);
+                        bundle.putString("height", heightString);
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        startActivity(intent);
+                    }
 
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }
 
-                String email = sharedPreferences.getString("email", "");
-                // Perform the HTTP POST request in the activity
-                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-                String postData = "startingWeight=" + startingWeightString + "targetWeight" + targetWeightString + "height" + heightString;
-                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
+                    @Override
+                    public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                        if (response.isSuccessful()) {
+                            ResponseModel data = response.body();
+                            onSuccess(data);
+                        } else {
+                            String errorMessage = "Error: " + response.code();
+                            onError(errorMessage);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                        String errorMessage = "Request failed: " + throwable.getMessage();
+                        onError(errorMessage);
+                    }
+                });
             }
         });
 

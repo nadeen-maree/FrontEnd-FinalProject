@@ -5,12 +5,9 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -18,29 +15,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Calendar;
 import java.util.Locale;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 public class Question2Fragment extends Fragment {
 
     private TextView dateText;
     FloatingActionButton nextButton2;
+
+    private ApiService apiService;
 
     //private HttpRequestListener httpRequestListener;
 
@@ -55,6 +47,8 @@ public class Question2Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question2, container, false);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
+        apiService = ApiService.getInstance();
+
         dateText = view.findViewById(R.id.birthdate_text);
         nextButton2 = view.findViewById(R.id.next2_button);
 
@@ -66,38 +60,59 @@ public class Question2Fragment extends Fragment {
         });
 
         nextButton2.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 String date = dateText.getText().toString();
                 SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
                 editor.putString("date", date);
                 editor.apply();
+
                 if (date.equals("dd/MM/yyyy")) {
                     Toast.makeText(getContext(), "Please select a date", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                    Bundle bundle = new Bundle();
-                    bundle.putString("date", date);
-                    Question3Fragment question3Fragment = new Question3Fragment();
-                    question3Fragment.setArguments(bundle);
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, question3Fragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
 
-                String email = sharedPreferences.getString("email", "");
-                // Perform the HTTP POST request in the activity
-                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-                String postData = "date=" + date;
-                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
-                }
+                apiService.submitDate(date, new ApiService.DataSubmitCallback() {
+                    @Override
+                    public void onSuccess(ResponseModel response) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("date", date);
+                        Question3Fragment question3Fragment = new Question3Fragment();
+                        question3Fragment.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, question3Fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                        if (response.isSuccessful()) {
+                            ResponseModel data = response.body();
+                            onSuccess(data);
+                        } else {
+                            String errorMessage = "Error: " + response.code();
+                            onError(errorMessage);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                        String errorMessage = "Request failed: " + throwable.getMessage();
+                        onError(errorMessage);
+                    }
+                });
+            }
         });
-
         return view;
     }
 
-    private void showDatePicker() {
+        private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);

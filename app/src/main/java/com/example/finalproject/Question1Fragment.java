@@ -4,13 +4,9 @@ import static android.content.Context.MODE_PRIVATE;
 
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -18,30 +14,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class Question1Fragment extends Fragment {
 
     private EditText nameEditText;
     FloatingActionButton nextButton;
 
+    private ApiService apiService;
+
     //private HttpRequestListener httpRequestListener;
 
     public Question1Fragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        apiService = ApiService.getInstance();
     }
 
     @Override
@@ -65,25 +61,47 @@ public class Question1Fragment extends Fragment {
                 if (name.isEmpty()) {
                     Toast.makeText(getActivity(), "Please enter your name", Toast.LENGTH_SHORT).show();
                 } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("name", name);
-                    Question2Fragment question2Fragment = new Question2Fragment();
-                    question2Fragment.setArguments(bundle);
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.fragment_container, question2Fragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
+                    apiService.submitName(name, new ApiService.DataSubmitCallback() {
+                        @Override
+                        public void onSuccess(ResponseModel response) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString("name", name);
+                            Question2Fragment question2Fragment = new Question2Fragment();
+                            question2Fragment.setArguments(bundle);
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.fragment_container, question2Fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
 
-                String email = sharedPreferences.getString("email", "");
-                // Perform the HTTP POST request in the activity
-                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-                String postData = "name=" + name;
-                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
+                        @Override
+                        public void onError(String errorMessage) {
+                            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                            if (response.isSuccessful()) {
+                                ResponseModel data = response.body();
+                                onSuccess(data);
+                            } else {
+                                String errorMessage = "Error: " + response.code();
+                                onError(errorMessage);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                            String errorMessage = "Request failed: " + throwable.getMessage();
+                            onError(errorMessage);
+                        }
+                    });
+                }
             }
         });
         return view;
     }
+
 
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {
 //

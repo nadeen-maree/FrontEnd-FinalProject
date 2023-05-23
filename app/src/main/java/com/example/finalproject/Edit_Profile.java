@@ -42,6 +42,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class Edit_Profile extends AppCompatActivity {
 
@@ -64,11 +66,14 @@ public class Edit_Profile extends AppCompatActivity {
     private static final int MAX_HEIGHT_CM = 250;
     private Uri selectedImageUri; // declare the URI variable outside of the method
 
+    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
+
+        apiService = ApiService.getInstance();
 
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
@@ -606,40 +611,40 @@ public class Edit_Profile extends AppCompatActivity {
         String targetWeight = targetWeightText.getText().toString();
         String height = heightText.getText().toString();
         String imageUri = prefs.getString("image", null);
-            if (imageUri != null) {
-                Glide.with(this).load(Uri.parse(imageUri)).into(profileImage);
-            }
-
-        editor.putString("name", name);
-        editor.putString("date", date);
-        editor.putString("gender", gender);
-        editor.putString("dietType", dietType);
-        editor.putString("fitnessLevel", fitnessLevel);
-        editor.putString("FocusZones", focusZones);
-        editor.putString("physicalLimitations", physicalLimitations);
-        editor.putString("starting_weight", startingWeight);
-        editor.putString("target_weight", targetWeight);
-        editor.putString("height", height);
-
-
-        // add the selected image URI as a string to the shared preferences
-        if (selectedImageUri != null) {
-            editor.putString("image", selectedImageUri.toString());
+        if (imageUri != null) {
+            Glide.with(this).load(Uri.parse(imageUri)).into(profileImage);
         }
 
-        editor.apply();
-
-        Intent intent = new Intent();
-        intent.putExtra("name", name);
-        intent.putExtra("date", date);
-        intent.putExtra("gender", gender);
-        intent.putExtra("dietType", dietType);
-        intent.putExtra("fitnessLevel", fitnessLevel);
-        intent.putExtra("focusZones", focusZones);
-        intent.putExtra("physicalLimitations", physicalLimitations);
-        intent.putExtra("startingWeight", startingWeight);
-        intent.putExtra("targetWeight", targetWeight);
-        intent.putExtra("height", height);
+//        editor.putString("name", name);
+//        editor.putString("date", date);
+//        editor.putString("gender", gender);
+//        editor.putString("dietType", dietType);
+//        editor.putString("fitnessLevel", fitnessLevel);
+//        editor.putString("FocusZones", focusZones);
+//        editor.putString("physicalLimitations", physicalLimitations);
+//        editor.putString("starting_weight", startingWeight);
+//        editor.putString("target_weight", targetWeight);
+//        editor.putString("height", height);
+//
+//
+//        // add the selected image URI as a string to the shared preferences
+//        if (selectedImageUri != null) {
+//            editor.putString("image", selectedImageUri.toString());
+//        }
+//
+//        editor.apply();
+//
+//        Intent intent = new Intent();
+//        intent.putExtra("name", name);
+//        intent.putExtra("date", date);
+//        intent.putExtra("gender", gender);
+//        intent.putExtra("dietType", dietType);
+//        intent.putExtra("fitnessLevel", fitnessLevel);
+//        intent.putExtra("focusZones", focusZones);
+//        intent.putExtra("physicalLimitations", physicalLimitations);
+//        intent.putExtra("startingWeight", startingWeight);
+//        intent.putExtra("targetWeight", targetWeight);
+//        intent.putExtra("height", height);
 
         if (selectedImageUri != null) {
             profileImage.setImageURI(selectedImageUri);
@@ -648,112 +653,157 @@ public class Edit_Profile extends AppCompatActivity {
         }
 
         // Create the JSON request body
-        JSONObject requestBody = new JSONObject();
+        JSONObject profileData  = new JSONObject();
         try {
-            requestBody.put("name", name);
-            requestBody.put("date", date);
-            requestBody.put("gender", gender);
-            requestBody.put("dietType", dietType);
-            requestBody.put("fitnessLevel", fitnessLevel);
-            requestBody.put("focusZones", focusZones);
-            requestBody.put("physicalLimitations", physicalLimitations);
-            requestBody.put("startingWeight", startingWeight);
-            requestBody.put("targetWeight", targetWeight);
-            requestBody.put("height", height);
+            profileData .put("name", name);
+            profileData .put("date", date);
+            profileData .put("gender", gender);
+            profileData .put("dietType", dietType);
+            profileData .put("fitnessLevel", fitnessLevel);
+            profileData .put("focusZones", focusZones);
+            profileData .put("physicalLimitations", physicalLimitations);
+            profileData .put("startingWeight", startingWeight);
+            profileData .put("targetWeight", targetWeight);
+            profileData .put("height", height);
+
+
+            apiService.updateProfile(name, gender, dietType, fitnessLevel, focusZones, physicalLimitations, startingWeight, targetWeight, height, imageUri, new ApiService.DataSubmitCallback() {
+                @Override
+                public void onSuccess(ResponseModel response) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", name);
+                    bundle.putString("gender", gender);
+                    bundle.putString("dietType", dietType);
+                    bundle.putString("fitnessLevel", fitnessLevel);
+                    bundle.putString("focusZones", focusZones);
+                    bundle.putString("physicalLimitations", physicalLimitations);
+                    bundle.putString("startingWeight", startingWeight);
+                    bundle.putString("targetWeight", targetWeight);
+                    bundle.putString("height", height);
+                    bundle.putString("imageUri", imageUri);
+                    Intent intent = new Intent(Edit_Profile.this, ProfileActivity.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onError(String errorMessage) {
+                    Toast.makeText(Edit_Profile.this, errorMessage, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                    if (response.isSuccessful()) {
+                        ResponseModel data = response.body();
+                        onSuccess(data);
+                    } else {
+                        String errorMessage = "Error: " + response.code();
+                        onError(errorMessage);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                    String errorMessage = "Request failed: " + throwable.getMessage();
+                    onError(errorMessage);
+                }
+
+            });
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
+    }
+
         // Create an instance of HttpPostTask and execute it
-        SharedPreferences sharedPreferences = Edit_Profile.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
-        String email = sharedPreferences.getString("email", "");
-        String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-        HttpPostTask task = new HttpPostTask(url, requestBody.toString(), new HttpPostTask.OnHttpPostTaskCompleted() {
-            @Override
-            public void onHttpPostTaskCompleted(String response) {
-                // Process the response as needed
-                // ...
-                System.out.println("Response: " + response);
-            }
-        });
-        task.execute();
+//        SharedPreferences sharedPreferences = Edit_Profile.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+//        String email = sharedPreferences.getString("email", "");
+//        String url = "http://10.0.2.2:8181/questionnaire?email" + email;
+//        HttpPostTask task = new HttpPostTask(url, requestBody.toString(), new HttpPostTask.OnHttpPostTaskCompleted() {
+//            @Override
+//            public void onHttpPostTaskCompleted(String response) {
+//                // Process the response as needed
+//                // ...
+//                System.out.println("Response: " + response);
+//            }
+//        });
+//        task.execute();
+//
+//        setResult(HttpURLConnection.HTTP_OK, intent);
+//        finish();
+//    }
 
-        setResult(HttpURLConnection.HTTP_OK, intent);
-        finish();
-    }
-
-    public static class HttpPostTask extends AsyncTask<String, Void, String> {
-        private final String url;
-        private final String requestBody;
-        private final OnHttpPostTaskCompleted listener;
-
-        public HttpPostTask(String url, String requestBody, OnHttpPostTaskCompleted listener) {
-            this.url = url;
-            this.requestBody = requestBody;
-            this.listener = listener;
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            try {
-                // Create the connection
-                URL url = new URL(this.url);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("POST");
-                urlConnection.setDoOutput(true);
-
-                // Set the request body
-                OutputStream outputStream = urlConnection.getOutputStream();
-                outputStream.write(requestBody.getBytes());
-                outputStream.flush();
-                outputStream.close();
-
-                // Read the response
-                int responseCode = urlConnection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    StringBuilder response = new StringBuilder();
-                    reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        response.append(line);
-                    }
-
-                    return response.toString();
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            super.onPostExecute(response);
-            if (listener != null) {
-                listener.onHttpPostTaskCompleted(response);
-            }
-        }
-
-        public interface OnHttpPostTaskCompleted {
-            void onHttpPostTaskCompleted(String response);
-        }
-
-    }
-
+//    public static class HttpPostTask extends AsyncTask<String, Void, String> {
+//        private final String url;
+//        private final String requestBody;
+//        private final OnHttpPostTaskCompleted listener;
+//
+//        public HttpPostTask(String url, String requestBody, OnHttpPostTaskCompleted listener) {
+//            this.url = url;
+//            this.requestBody = requestBody;
+//            this.listener = listener;
+//        }
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//            HttpURLConnection urlConnection = null;
+//            BufferedReader reader = null;
+//            try {
+//                // Create the connection
+//                URL url = new URL(this.url);
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                urlConnection.setRequestMethod("POST");
+//                urlConnection.setDoOutput(true);
+//
+//                // Set the request body
+//                OutputStream outputStream = urlConnection.getOutputStream();
+//                outputStream.write(requestBody.getBytes());
+//                outputStream.flush();
+//                outputStream.close();
+//
+//                // Read the response
+//                int responseCode = urlConnection.getResponseCode();
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    StringBuilder response = new StringBuilder();
+//                    reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+//                    String line;
+//                    while ((line = reader.readLine()) != null) {
+//                        response.append(line);
+//                    }
+//
+//                    return response.toString();
+//                }
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
+//                if (urlConnection != null) {
+//                    urlConnection.disconnect();
+//                }
+//                if (reader != null) {
+//                    try {
+//                        reader.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String response) {
+//            super.onPostExecute(response);
+//            if (listener != null) {
+//                listener.onHttpPostTaskCompleted(response);
+//            }
+//        }
+//
+//        public interface OnHttpPostTaskCompleted {
+//            void onHttpPostTaskCompleted(String response);
+//        }
+//
+//    }
+//
 
 }

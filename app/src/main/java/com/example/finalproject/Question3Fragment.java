@@ -30,11 +30,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import retrofit2.Call;
+import retrofit2.Response;
+
 public class Question3Fragment extends Fragment {
 
     private RadioGroup genderRadioGroup;
     private RadioButton maleRadioButton, femaleRadioButton, otherRadioButton;
     private FloatingActionButton nextButton3;
+
+    private ApiService apiService;
 
     public Question3Fragment() {
         // Required empty public constructor
@@ -48,6 +53,8 @@ public class Question3Fragment extends Fragment {
 
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+
+        apiService = ApiService.getInstance();
 
         genderRadioGroup = view.findViewById(R.id.gender_radio_group);
         maleRadioButton = view.findViewById(R.id.male_radio_button);
@@ -72,27 +79,46 @@ public class Question3Fragment extends Fragment {
                     Toast.makeText(getContext(), "Please select a gender", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                editor.putString("gender", gender);
-                editor.apply();
+                String finalGender = gender;
+                apiService.submitGender(gender, new ApiService.DataSubmitCallback() {
+                    @Override
+                    public void onSuccess(ResponseModel response) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("gender", finalGender);
+                        Question4Fragment question4Fragment = new Question4Fragment();
+                        question4Fragment.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, question4Fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
 
-                Bundle bundle = new Bundle();
-                bundle.putString("gender", gender);
-                Question4Fragment question4Fragment = new Question4Fragment();
-                question4Fragment.setArguments(bundle);
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, question4Fragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }
 
-                String email = sharedPreferences.getString("email", "");
-                // Perform the HTTP POST request in the activity
-                String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-                String postData = "gender=" + gender;
-                ((QuestionnaireActivity) getActivity()).performHttpPostRequest(url, postData);
+                    @Override
+                    public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                        if (response.isSuccessful()) {
+                            ResponseModel data = response.body();
+                            onSuccess(data);
+                        } else {
+                            String errorMessage = "Error: " + response.code();
+                            onError(errorMessage);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                        String errorMessage = "Request failed: " + throwable.getMessage();
+                        onError(errorMessage);
+                    }
+                });
             }
         });
 
-        return view;
+                return view;
     }
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {
 //
