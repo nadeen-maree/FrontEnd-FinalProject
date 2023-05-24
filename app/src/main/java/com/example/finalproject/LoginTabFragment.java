@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,12 +71,13 @@ public class LoginTabFragment extends Fragment {
             public void onClick(View view) {
 
                 String userEmail = email.getText().toString();
+                String logInEmail = userEmail.replaceFirst("@","__");
                 //editor.putString("userEmail", userEmail).apply();
                 String userPassword = pass.getText().toString();
                 //editor.putString("userPassword", userPassword).apply();
 
                 HttpPostTask task = new HttpPostTask();
-                task.execute("http://10.0.2.2:8181/users/login", userEmail, userPassword);
+                task.execute("http://10.0.2.2:8181/users/login", logInEmail, userPassword);
 
                 Intent intent= new Intent(getActivity(), MainActivity.class);
                 startActivity(intent);

@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -27,6 +28,7 @@ public class Question1Fragment extends Fragment {
     FloatingActionButton nextButton;
 
     private ApiService apiService;
+    private Context context;
 
     //private HttpRequestListener httpRequestListener;
 
@@ -37,7 +39,9 @@ public class Question1Fragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        apiService = ApiService.getInstance();
+
+        context = getContext();
+        apiService = ApiService.getInstance(context);
     }
 
     @Override

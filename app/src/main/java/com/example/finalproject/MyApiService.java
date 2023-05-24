@@ -1,5 +1,7 @@
 package com.example.finalproject;
 
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -28,11 +30,11 @@ public interface MyApiService {
 
     @FormUrlEncoded
     @POST("submitFocusZones")
-    Call<ResponseModel> submitFocusZones(@Field("focusZones") String focusZones);
+    Call<ResponseModel> submitFocusZones(@Field("focusZones") ArrayList<String> focusZones);
 
     @FormUrlEncoded
     @POST("submitPhysicalLimitations")
-    Call<ResponseModel> submitPhysicalLimitations(@Field("physicalLimitations") String physicalLimitations);
+    Call<ResponseModel> submitPhysicalLimitations(@Field("physicalLimitations") ArrayList<String> physicalLimitations);
 
     @FormUrlEncoded
     @POST("submitUserDetails")
@@ -40,6 +42,6 @@ public interface MyApiService {
 
     @FormUrlEncoded
     @POST("updateProfile")
-    Call<ResponseModel> updateProfile(@Field("name") String name, @Field("gender") String gender, @Field("dietType") String dietType, @Field("fitnessLevel") String fitnessLevel, @Field("focusZones") String focusZones, @Field("physicalLimitations") String physicalLimitations,@Field("startingWeight") String startingWeight, @Field("targetWeight") String targetWeight, @Field("height") String height, @Field("imageUri") String imageUri);
+    Call<ResponseModel> updateProfile(@Field("name") String name, @Field("gender") String gender, @Field("dietType") String dietType, @Field("fitnessLevel") String fitnessLevel, @Field("focusZones") ArrayList<String> focusZones, @Field("physicalLimitations") ArrayList<String> physicalLimitations,@Field("startingWeight") String startingWeight, @Field("targetWeight") String targetWeight, @Field("height") String height, @Field("imageUri") String imageUri);
 }
 

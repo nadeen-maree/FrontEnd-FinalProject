@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class Question6Fragment extends Fragment {
     private FloatingActionButton nextButton6;
 
     private ApiService apiService;
+    private Context context;
 
     public Question6Fragment() {
         // Required empty public constructor
@@ -53,7 +55,8 @@ public class Question6Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question6, container, false);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
-        apiService = ApiService.getInstance();
+        context = getContext();
+        apiService = ApiService.getInstance(context);
 
         chestCheckbox = view.findViewById(R.id.chest_checkbox);
         backCheckbox = view.findViewById(R.id.back_checkbox);
@@ -80,7 +83,7 @@ public class Question6Fragment extends Fragment {
                 }
 
                 // Create a list to store the selected focus zones
-                List<String> selectedFocusZones = new ArrayList<>();
+                ArrayList<String> selectedFocusZones = new ArrayList<>();
 
                 // Check each checkbox and add its label to the list if it's checked
                 if (chestChecked) {
@@ -99,14 +102,12 @@ public class Question6Fragment extends Fragment {
                     selectedFocusZones.add(absCheckbox.getText().toString());
                 }
 
-                // Create a string from the list of selected focus zones
-                String selectedFocusZonesString = TextUtils.join(", ", selectedFocusZones);
 
-                apiService.submitFocusZones(selectedFocusZonesString, new ApiService.DataSubmitCallback() {
+                apiService.submitFocusZones(selectedFocusZones, new ApiService.DataSubmitCallback() {
                     @Override
                     public void onSuccess(ResponseModel response) {
                         Bundle bundle = new Bundle();
-                        bundle.putString("selectedFocusZones", selectedFocusZonesString);
+                        bundle.putStringArrayList("selectedFocusZones", selectedFocusZones);
                         Question7Fragment question7Fragment = new Question7Fragment();
                         question7Fragment.setArguments(bundle);
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();

@@ -47,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Context mContext;
     private static final int REQUEST_CODE_EDIT_PROFILE = 1;
 
-    SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
+    SharedPreferences prefs;
 
     private ApiService apiService;
 
@@ -62,9 +62,10 @@ public class ProfileActivity extends AppCompatActivity {
 
         //new HttpGetTask().execute(GET_PROFILE_URL);
 
-        apiService = ApiService.getInstance();
+        prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
 
         mContext = this; // initialize the context
+        apiService = ApiService.getInstance(mContext);
 
 
         personal_plan = findViewById(R.id.tab1_txt);
@@ -168,8 +169,9 @@ public class ProfileActivity extends AppCompatActivity {
                                    String startingWeight, String targetWeight, String height, String imageUri) {
         SharedPreferences sharedPreferences = ProfileActivity.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@","__");
         String baseUrl = "http://10.0.2.2:8181/questionnaires/";
-        String endpoint = email;
+        String endpoint = apiEmail;
         String query = "name=" + name + "&date=" + date + "&gender=" + gender + "&dietType=" + dietType + "&fitnessLevel=" + fitnessLevel +
                 "&focusZones=" + focusZones + "&physicalLimitations=" + physicalLimitations +
                 "&startingWeight=" + startingWeight + "&targetWeight=" + targetWeight + "&height=" + height + "&imageUri=" + imageUri;

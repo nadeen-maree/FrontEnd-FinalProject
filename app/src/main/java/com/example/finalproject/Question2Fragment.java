@@ -5,6 +5,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -33,6 +34,7 @@ public class Question2Fragment extends Fragment {
     FloatingActionButton nextButton2;
 
     private ApiService apiService;
+    private Context context;
 
     //private HttpRequestListener httpRequestListener;
 
@@ -47,7 +49,8 @@ public class Question2Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question2, container, false);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
-        apiService = ApiService.getInstance();
+        context = getContext();
+        apiService = ApiService.getInstance(context);
 
         dateText = view.findViewById(R.id.birthdate_text);
         nextButton2 = view.findViewById(R.id.next2_button);

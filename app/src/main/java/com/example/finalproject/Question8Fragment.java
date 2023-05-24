@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -38,6 +39,7 @@ public class Question8Fragment extends Fragment {
     private FloatingActionButton finishButton;
 
     private ApiService apiService;
+    private Context context;
 
     //private SharedPreferences sharedPreferences;
 
@@ -56,7 +58,8 @@ public class Question8Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question8, container, false);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
-        apiService = ApiService.getInstance();
+        context = getContext();
+        apiService = ApiService.getInstance(context);
 
         //sharedPreferences = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE);
 

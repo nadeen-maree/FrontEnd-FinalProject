@@ -213,7 +213,7 @@ public class Add_Food extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
             // Perform the HTTP POST request here
-            String urlStr = "http://10.0.2.2:8181/addfood?email" + email;
+            String urlStr = "http://10.0.2.2:8181/addfood/" + email;
             try {
                 URL url = new URL(urlStr);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -273,8 +273,8 @@ public class Add_Food extends AppCompatActivity {
         @Override
             protected String doInBackground(Void... params) {
                 // Perform the HTTP GET request here
-                String urlStr = "http://10.0.2.2:8181/addfood?email" + email +
-                        "target=" + totalCalories +
+                String urlStr = "http://10.0.2.2:8181/addfood/" + email +
+                        "target=" + (int) Integer.parseInt(targetText.getText().toString().replaceAll("[^\\d]", "")) +
                         "percentage=" + percentage(String.valueOf(totalCalories)) +
                         "breakfast=" + breakfastEditText.getText().toString() +
                         "lunch=" + lunchEditText.getText().toString() +

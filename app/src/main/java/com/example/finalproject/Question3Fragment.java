@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ public class Question3Fragment extends Fragment {
     private FloatingActionButton nextButton3;
 
     private ApiService apiService;
+    private Context context;
 
     public Question3Fragment() {
         // Required empty public constructor
@@ -54,7 +56,8 @@ public class Question3Fragment extends Fragment {
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
-        apiService = ApiService.getInstance();
+        context = getContext();
+        apiService = ApiService.getInstance(context);
 
         genderRadioGroup = view.findViewById(R.id.gender_radio_group);
         maleRadioButton = view.findViewById(R.id.male_radio_button);

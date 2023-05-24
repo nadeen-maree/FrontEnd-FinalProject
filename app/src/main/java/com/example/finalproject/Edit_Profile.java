@@ -5,6 +5,7 @@ import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -38,6 +39,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -67,13 +70,17 @@ public class Edit_Profile extends AppCompatActivity {
     private Uri selectedImageUri; // declare the URI variable outside of the method
 
     private ApiService apiService;
+    private Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        apiService = ApiService.getInstance();
+        context = this;
+
+        apiService = ApiService.getInstance(context);
 
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
@@ -478,6 +485,7 @@ public class Edit_Profile extends AppCompatActivity {
     public void onFocusZonesOkButtonClick(View view) {
         StringBuilder selectedZonesBuilder = new StringBuilder();
 
+
         for (int i = 0; i < focusZonesContainer.getChildCount(); i++) {
             View childView = focusZonesContainer.getChildAt(i);
 
@@ -606,7 +614,11 @@ public class Edit_Profile extends AppCompatActivity {
         String dietType = dietTypeText.getText().toString();
         String fitnessLevel = fitnessLevelText.getText().toString();
         String focusZones = focusZonesText.getText().toString();
+        String[] focusZonesArray = focusZones.split(",");
+        ArrayList<String> focusZonesList = new ArrayList<>(Arrays.asList(focusZonesArray));
         String physicalLimitations = physicalLimitationsText.getText().toString();
+        String[] physicalLimitationsArray = physicalLimitations.split(",");
+        ArrayList<String> physicalLimitationsList = new ArrayList<>(Arrays.asList(physicalLimitationsArray));
         String startingWeight = startingWeightText.getText().toString();
         String targetWeight = targetWeightText.getText().toString();
         String height = heightText.getText().toString();
@@ -661,13 +673,14 @@ public class Edit_Profile extends AppCompatActivity {
             profileData .put("dietType", dietType);
             profileData .put("fitnessLevel", fitnessLevel);
             profileData .put("focusZones", focusZones);
-            profileData .put("physicalLimitations", physicalLimitations);
+            profileData .put("focusZones", focusZonesList);
+            profileData .put("physicalLimitations", physicalLimitationsList);
             profileData .put("startingWeight", startingWeight);
             profileData .put("targetWeight", targetWeight);
             profileData .put("height", height);
 
 
-            apiService.updateProfile(name, gender, dietType, fitnessLevel, focusZones, physicalLimitations, startingWeight, targetWeight, height, imageUri, new ApiService.DataSubmitCallback() {
+            apiService.updateProfile(name, gender, dietType, fitnessLevel, focusZonesList, physicalLimitationsList, startingWeight, targetWeight, height, imageUri, new ApiService.DataSubmitCallback() {
                 @Override
                 public void onSuccess(ResponseModel response) {
                     Bundle bundle = new Bundle();
@@ -675,8 +688,10 @@ public class Edit_Profile extends AppCompatActivity {
                     bundle.putString("gender", gender);
                     bundle.putString("dietType", dietType);
                     bundle.putString("fitnessLevel", fitnessLevel);
-                    bundle.putString("focusZones", focusZones);
-                    bundle.putString("physicalLimitations", physicalLimitations);
+                    //bundle.putString("focusZones", focusZones);
+                    bundle.putStringArrayList("focusZones", focusZonesList);
+                    bundle.putStringArrayList("physicalLimitations", physicalLimitationsList);
+                    //bundle.putString("physicalLimitations", physicalLimitations);
                     bundle.putString("startingWeight", startingWeight);
                     bundle.putString("targetWeight", targetWeight);
                     bundle.putString("height", height);

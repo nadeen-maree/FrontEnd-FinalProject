@@ -37,11 +37,16 @@ public class SignupTabFragment extends Fragment {
     Button signup;
     float v = 0;
 
+    static final String SHARED_PREFS_KEY = "myPrefs";
+    private SharedPreferences sharedPreferences;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.signup_tab_fragment, container, false);
 
-        SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+        //SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+
+        sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
         email = root.findViewById(R.id.signup_email);
         mobileNum = root.findViewById(R.id.mobile_num);
@@ -75,16 +80,22 @@ public class SignupTabFragment extends Fragment {
                 startActivity(intent);
 
                 String userEmail = email.getText().toString();
-                editor.putString("userEmail", userEmail).apply();
+                String signUpEmail = userEmail.replaceFirst("@","__");
+                //editor.putString("userEmail", userEmail).apply();
                 String userPassword = pass.getText().toString();
-                editor.putString("userPassword", userPassword).apply();
+               // editor.putString("userPassword", userPassword).apply();
                 String userMobileNumber = mobileNum.getText().toString();
-                editor.putString("userMobileNumber", userMobileNumber).apply();
+               // editor.putString("userMobileNumber", userMobileNumber).apply();
                 String userConfirmPassword = confirmPass.getText().toString();
-                editor.putString("userConfirmPassword", userConfirmPassword).apply();
+               // editor.putString("userConfirmPassword", userConfirmPassword).apply();
 
                 SignupTabFragment.HttpPostTask task = new SignupTabFragment.HttpPostTask();
-                task.execute("http://10.0.2.2:8181/users/login", userEmail, userPassword,userMobileNumber, userConfirmPassword);
+                task.execute("http://10.0.2.2:8181/users/login", signUpEmail, userPassword,userMobileNumber, userConfirmPassword);
+
+                String sharedEmail = email.getText().toString();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("email", sharedEmail);
+                editor.apply();
             }
         });
 

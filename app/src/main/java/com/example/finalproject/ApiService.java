@@ -6,6 +6,9 @@ import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,23 +21,30 @@ public class ApiService {
     private Retrofit retrofit;
     private MyApiService myApiService;
 
-    private ApiService() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+    private static final String BASE_URL = "http://10.0.2.2:8181/";
+
+    private ApiService(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@","__");
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8181/questionnaires/" + email)
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
+        myApiService = retrofit.create(MyApiService.class);
+
+        String url = BASE_URL + "questionnaires/" + apiEmail;
     }
 
-    private Context getActivity() {
-        return null;
-    }
-
-    public static ApiService getInstance() {
+    public static ApiService getInstance(Context context) {
         if (instance == null) {
-            instance = new ApiService();
+            synchronized (ApiService.class) {
+                if (instance == null) {
+                    instance = new ApiService(context.getApplicationContext());
+                }
+            }
         }
         return instance;
     }
@@ -149,7 +159,7 @@ public class ApiService {
         });
     }
 
-    public void submitFocusZones(String focusZones, final DataSubmitCallback callback) {
+    public void submitFocusZones(ArrayList<String> focusZones, final DataSubmitCallback callback) {
         Call<ResponseModel> call = myApiService.submitFocusZones(focusZones);
         call.enqueue(new Callback<ResponseModel>() {
             @Override
@@ -171,7 +181,7 @@ public class ApiService {
         });
     }
 
-    public void submitPhysicalLimitations(String physicalLimitations, final DataSubmitCallback callback) {
+    public void submitPhysicalLimitations(ArrayList<String> physicalLimitations, final DataSubmitCallback callback) {
         Call<ResponseModel> call = myApiService.submitPhysicalLimitations(physicalLimitations);
         call.enqueue(new Callback<ResponseModel>() {
             @Override
@@ -215,7 +225,7 @@ public class ApiService {
         });
     }
 
-    public void updateProfile(String name, String gender, String dietType, String fitnessLevel, String focusZones, String physicalLimitations, String startingWeight, String targetWeight, String height, String imageUri, final DataSubmitCallback callback) {
+    public void updateProfile(String name, String gender, String dietType, String fitnessLevel, ArrayList<String> focusZones, ArrayList<String> physicalLimitations, String startingWeight, String targetWeight, String height, String imageUri, final DataSubmitCallback callback) {
         Call<ResponseModel> call = myApiService.updateProfile(name, gender, dietType, fitnessLevel, focusZones, physicalLimitations, startingWeight, targetWeight, height, imageUri);
         call.enqueue(new Callback<ResponseModel>() {
             @Override
@@ -238,7 +248,7 @@ public class ApiService {
     }
 
     public void get(String url, final DataSubmitCallback dataSubmitCallback) {
-        url = String.valueOf(getInstance().retrofit.baseUrl());
+
     }
 
     // Add other API methods for your specific use case

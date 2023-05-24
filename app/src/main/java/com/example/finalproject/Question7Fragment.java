@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class Question7Fragment extends Fragment {
     private FloatingActionButton nextButton7;
 
     private ApiService apiService;
+    private Context context;
 
     public Question7Fragment() {
         // Required empty public constructor
@@ -53,7 +55,8 @@ public class Question7Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question7, container, false);
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
-        apiService = ApiService.getInstance();
+        context = getContext();
+        apiService = ApiService.getInstance(context);
 
         noneCheckbox = view.findViewById(R.id.none_checkbox);
         kneePainCheckbox = view.findViewById(R.id.knee_pain_checkbox);
@@ -134,7 +137,7 @@ public class Question7Fragment extends Fragment {
                 }
 
                 // Create a list to store the selected focus zones
-                List<String> selectedPhysicalLimitations = new ArrayList<>();
+                ArrayList<String> selectedPhysicalLimitations = new ArrayList<>();
 
                 // Check each checkbox and add its label to the list if it's checked
                 if (noneChecked) {
@@ -169,11 +172,11 @@ public class Question7Fragment extends Fragment {
                 // Create a string from the list of selected physical limitations
                 String selectedPhysicalLimitationsString = TextUtils.join(", ", selectedPhysicalLimitations);
 
-                apiService.submitPhysicalLimitations(selectedPhysicalLimitationsString, new ApiService.DataSubmitCallback() {
+                apiService.submitPhysicalLimitations(selectedPhysicalLimitations, new ApiService.DataSubmitCallback() {
                     @Override
                     public void onSuccess(ResponseModel response) {
                         Bundle bundle = new Bundle();
-                        bundle.putString("selectedPhysicalLimitations", selectedPhysicalLimitationsString);
+                        bundle.putStringArrayList("selectedPhysicalLimitations", selectedPhysicalLimitations);
                         Question8Fragment question8Fragment = new Question8Fragment();
                         question8Fragment.setArguments(bundle);
                         FragmentTransaction transaction = getFragmentManager().beginTransaction();
