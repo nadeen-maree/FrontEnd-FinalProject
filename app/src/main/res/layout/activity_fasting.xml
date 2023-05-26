@@ -219,7 +219,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout2"
+        android:id="@+id/fasting_13_hours_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginBottom="12dp"
@@ -235,7 +235,7 @@
         app:layout_constraintVertical_bias="0.35">
 
         <TextView
-            android:id="@+id/a1"
+            android:id="@+id/fasting_13_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -272,7 +272,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout3"
+        android:id="@+id/fasting_16_hours_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginBottom="12dp"
@@ -284,11 +284,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/fasting_13_hours_constraint_layout"
         app:layout_constraintVertical_bias="0.05">
 
         <TextView
-            android:id="@+id/a6"
+            android:id="@+id/fasting_16_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -324,7 +324,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout4"
+        android:id="@+id/fasting_18_hours_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginBottom="12dp"
@@ -336,11 +336,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+        app:layout_constraintTop_toBottomOf="@+id/fasting_16_hours_constraint_layout"
         app:layout_constraintVertical_bias="0.08">
 
         <TextView
-            android:id="@+id/a12"
+            android:id="@+id/fasting_18_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -376,6 +376,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fasting_20_hours_constraint_layout"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginLeft="10dp"
@@ -387,11 +388,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
+        app:layout_constraintTop_toBottomOf="@+id/fasting_18_hours_constraint_layout"
         app:layout_constraintVertical_bias="0.15">
 
         <TextView
-            android:id="@+id/accessibility_custom_action_9"
+            android:id="@+id/fasting_20_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
