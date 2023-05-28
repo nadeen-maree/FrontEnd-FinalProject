@@ -207,13 +207,14 @@ public class Add_Food extends AppCompatActivity {
 
     SharedPreferences sharedPreferences = Add_Food.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
     String email = sharedPreferences.getString("email", "");
+    String apiEmail = email.replaceFirst("@","__");
 
     private class HttpPostTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
             // Perform the HTTP POST request here
-            String urlStr = "http://10.0.2.2:8181/addfood/" + email;
+            String urlStr = "http://10.0.2.2:8181/addfood/" + apiEmail;
             try {
                 URL url = new URL(urlStr);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -273,7 +274,7 @@ public class Add_Food extends AppCompatActivity {
         @Override
             protected String doInBackground(Void... params) {
                 // Perform the HTTP GET request here
-                String urlStr = "http://10.0.2.2:8181/addfood/" + email +
+                String urlStr = "http://10.0.2.2:8181/addfood/" + apiEmail +
                         "target=" + (int) Integer.parseInt(targetText.getText().toString().replaceAll("[^\\d]", "")) +
                         "percentage=" + percentage(String.valueOf(totalCalories)) +
                         "breakfast=" + breakfastEditText.getText().toString() +

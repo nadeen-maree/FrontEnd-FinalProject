@@ -82,7 +82,7 @@ public class FastingDetails extends AppCompatActivity {
             fastingHours.setText("13 ");
         } else if (constraintLayoutId == R.id.fasting_16_hours_constraint_layout) {
             // Fasting period for constraintLayout2
-           this.fastingPeriod = 16;
+            this.fastingPeriod = 16;
             fastingHours.setText("16 ");
         } else if(constraintLayoutId == R.id.fasting_18_hours_constraint_layout){
             this.fastingPeriod = 18;
