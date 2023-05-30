@@ -21,6 +21,8 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
@@ -44,6 +46,11 @@ public class Question7Fragment extends Fragment {
     private ApiService apiService;
     private Context context;
 
+    static ArrayList<String> selectedPhysicalLimitations;
+
+    private SharedPreferences sharedPreferences;
+    private String email;
+
     public Question7Fragment() {
         // Required empty public constructor
     }
@@ -53,7 +60,10 @@ public class Question7Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question7, container, false);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@", "__");
 
         context = getContext();
         apiService = ApiService.getInstance(context);
@@ -137,7 +147,7 @@ public class Question7Fragment extends Fragment {
                 }
 
                 // Create a list to store the selected focus zones
-                ArrayList<String> selectedPhysicalLimitations = new ArrayList<>();
+                selectedPhysicalLimitations = new ArrayList<>();
 
                 // Check each checkbox and add its label to the list if it's checked
                 if (noneChecked) {
@@ -169,10 +179,16 @@ public class Question7Fragment extends Fragment {
                     }
                 }
 
-                // Create a string from the list of selected physical limitations
-                String selectedPhysicalLimitationsString = TextUtils.join(", ", selectedPhysicalLimitations);
+                JsonObject requestBody = new JsonObject();
+                JsonArray physicalLimitationsArray = new JsonArray();
 
-                apiService.submitPhysicalLimitations(selectedPhysicalLimitations, new ApiService.DataSubmitCallback() {
+                for (String physicalLimitations : selectedPhysicalLimitations) {
+                    physicalLimitationsArray.add(physicalLimitations);
+                }
+
+                requestBody.add("physicalLimitations", physicalLimitationsArray);
+
+                apiService.submitQuestionnaire(apiEmail,requestBody, new ApiService.DataSubmitCallback() {
                     @Override
                     public void onSuccess(ResponseModel response) {
                         Bundle bundle = new Bundle();
@@ -211,6 +227,10 @@ public class Question7Fragment extends Fragment {
         });
 
         return view;
+    }
+
+    public static ArrayList getPhysicalLimitations(){
+        return selectedPhysicalLimitations;
     }
 
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {

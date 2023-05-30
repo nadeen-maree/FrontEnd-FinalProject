@@ -18,18 +18,21 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 import retrofit2.Response;
 
 public class Question1Fragment extends Fragment {
 
-    private EditText nameEditText;
+    private static EditText nameEditText;
     FloatingActionButton nextButton;
 
     private ApiService apiService;
     private Context context;
 
+    private SharedPreferences sharedPreferences;
+    private String email;
     //private HttpRequestListener httpRequestListener;
 
     public Question1Fragment() {
@@ -51,7 +54,9 @@ public class Question1Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question1, container, false);
 
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@", "__");
 
         nameEditText = view.findViewById(R.id.user_name_editText);
         nextButton = view.findViewById(R.id.next_button);
@@ -62,20 +67,29 @@ public class Question1Fragment extends Fragment {
                 String name = nameEditText.getText().toString();
                 editor.putString("name", name).apply();
 
+                JsonObject requestBody = new JsonObject();
+                requestBody.addProperty("name", name);
+
                 if (name.isEmpty()) {
                     Toast.makeText(getActivity(), "Please enter your name", Toast.LENGTH_SHORT).show();
                 } else {
-                    apiService.submitName(name, new ApiService.DataSubmitCallback() {
+                    apiService.submitQuestionnaire(apiEmail, requestBody, new ApiService.DataSubmitCallback() {
                         @Override
                         public void onSuccess(ResponseModel response) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString("name", name);
-                            Question2Fragment question2Fragment = new Question2Fragment();
-                            question2Fragment.setArguments(bundle);
-                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                            transaction.replace(R.id.fragment_container, question2Fragment);
-                            transaction.addToBackStack(null);
-                            transaction.commit();
+                            int responseCode = response.getResponseCode();
+                            if (responseCode == 200) {
+                                Bundle bundle = new Bundle();
+                                bundle.putString("name", name);
+                                Question2Fragment question2Fragment = new Question2Fragment();
+                                question2Fragment.setArguments(bundle);
+                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                transaction.replace(R.id.fragment_container, question2Fragment);
+                                transaction.addToBackStack(null);
+                                transaction.commit();
+                            }else{
+                                Toast.makeText(getActivity(), "response code not equal 200", Toast.LENGTH_SHORT).show();
+
+                            }
                         }
 
                         @Override
@@ -106,7 +120,10 @@ public class Question1Fragment extends Fragment {
         return view;
     }
 
-
+public static String getName(){
+     String name = nameEditText.getText().toString();
+    return name;
+}
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {
 //
 //        protected String doInBackground(String... params) {

@@ -20,6 +20,8 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
@@ -44,6 +46,11 @@ public class Question6Fragment extends Fragment {
     private ApiService apiService;
     private Context context;
 
+    static ArrayList<String> selectedFocusZones;
+
+    private SharedPreferences sharedPreferences;
+    private String email;
+
     public Question6Fragment() {
         // Required empty public constructor
     }
@@ -53,7 +60,9 @@ public class Question6Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question6, container, false);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@", "__");
 
         context = getContext();
         apiService = ApiService.getInstance(context);
@@ -83,7 +92,7 @@ public class Question6Fragment extends Fragment {
                 }
 
                 // Create a list to store the selected focus zones
-                ArrayList<String> selectedFocusZones = new ArrayList<>();
+                selectedFocusZones = new ArrayList<>();
 
                 // Check each checkbox and add its label to the list if it's checked
                 if (chestChecked) {
@@ -101,9 +110,17 @@ public class Question6Fragment extends Fragment {
                 if (absChecked) {
                     selectedFocusZones.add(absCheckbox.getText().toString());
                 }
+                JsonObject requestBody = new JsonObject();
+                JsonArray focusZonesArray = new JsonArray();
+
+                for (String focusZone : selectedFocusZones) {
+                    focusZonesArray.add(focusZone);
+                }
+
+                requestBody.add("focusZones", focusZonesArray);
 
 
-                apiService.submitFocusZones(selectedFocusZones, new ApiService.DataSubmitCallback() {
+                apiService.submitQuestionnaire(apiEmail,requestBody, new ApiService.DataSubmitCallback() {
                     @Override
                     public void onSuccess(ResponseModel response) {
                         Bundle bundle = new Bundle();
@@ -142,6 +159,10 @@ public class Question6Fragment extends Fragment {
         });
 
         return view;
+    }
+
+    public static ArrayList getFocusZones(){
+        return selectedFocusZones;
     }
 
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {

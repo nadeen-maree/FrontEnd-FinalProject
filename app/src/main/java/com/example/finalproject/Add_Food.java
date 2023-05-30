@@ -1,7 +1,5 @@
 package com.example.finalproject;
 
-import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -28,6 +26,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
+
 
 public class Add_Food extends AppCompatActivity {
 
@@ -38,14 +38,14 @@ public class Add_Food extends AppCompatActivity {
     EditText breakfastEditText, lunchEditText, dinnerEditText, snackEditText;
     ProgressWheel progressWheel;
 
+    SharedPreferences sharedPreferences;
+    private static final String SHARED_PREFS_KEY = "myPrefs";
     int totalCalories = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food);
-
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
@@ -205,7 +205,6 @@ public class Add_Food extends AppCompatActivity {
         return intPercentage;
     }
 
-    SharedPreferences sharedPreferences = Add_Food.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
     String email = sharedPreferences.getString("email", "");
     String apiEmail = email.replaceFirst("@","__");
 

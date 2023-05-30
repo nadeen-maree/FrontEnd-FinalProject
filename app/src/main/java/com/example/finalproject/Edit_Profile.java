@@ -29,6 +29,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,6 +74,10 @@ public class Edit_Profile extends AppCompatActivity {
     private ApiService apiService;
     private Context context;
 
+    static String imageUri;
+
+    private SharedPreferences sharedPreferences;
+    private String email, apiEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +87,10 @@ public class Edit_Profile extends AppCompatActivity {
         context = this;
 
         apiService = ApiService.getInstance(context);
+
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        apiEmail = email.replaceFirst("@", "__");
 
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
@@ -622,7 +632,7 @@ public class Edit_Profile extends AppCompatActivity {
         String startingWeight = startingWeightText.getText().toString();
         String targetWeight = targetWeightText.getText().toString();
         String height = heightText.getText().toString();
-        String imageUri = prefs.getString("image", null);
+        imageUri = prefs.getString("image", null);
         if (imageUri != null) {
             Glide.with(this).load(Uri.parse(imageUri)).into(profileImage);
         }
@@ -672,7 +682,6 @@ public class Edit_Profile extends AppCompatActivity {
             profileData .put("gender", gender);
             profileData .put("dietType", dietType);
             profileData .put("fitnessLevel", fitnessLevel);
-            profileData .put("focusZones", focusZones);
             profileData .put("focusZones", focusZonesList);
             profileData .put("physicalLimitations", physicalLimitationsList);
             profileData .put("startingWeight", startingWeight);
@@ -680,7 +689,32 @@ public class Edit_Profile extends AppCompatActivity {
             profileData .put("height", height);
 
 
-            apiService.updateProfile(name, gender, dietType, fitnessLevel, focusZonesList, physicalLimitationsList, startingWeight, targetWeight, height, imageUri, new ApiService.DataSubmitCallback() {
+            JsonObject requestBody = new JsonObject();
+            JsonArray focusZonesArrayList = new JsonArray();
+
+            for (String focusZone : focusZonesList) {
+                focusZonesArrayList.add(focusZone);
+            }
+
+            JsonArray physicalLimitationsArrayList = new JsonArray();
+
+            for (String physicalLimitation : physicalLimitationsList) {
+                physicalLimitationsArrayList.add(physicalLimitation);
+            }
+
+            requestBody.addProperty("name", name);
+            requestBody.addProperty("date", date);
+            requestBody.addProperty("gender", gender);
+            requestBody.addProperty("dietType", dietType);
+            requestBody.addProperty("fitnessLevel", fitnessLevel);
+            requestBody.add("focusZones", focusZonesArrayList);
+            requestBody.add("physicalLimitations", physicalLimitationsArrayList);
+            requestBody.addProperty("startingWeight", startingWeight);
+            requestBody.addProperty("targetWeight", targetWeight);
+            requestBody.addProperty("height", height);
+            requestBody.addProperty("image", imageUri);
+
+            apiService.submitQuestionnaire(apiEmail,requestBody , new ApiService.DataSubmitCallback() {
                 @Override
                 public void onSuccess(ResponseModel response) {
                     Bundle bundle = new Bundle();
@@ -728,6 +762,10 @@ public class Edit_Profile extends AppCompatActivity {
         }
 
 
+    }
+
+    public static String getImageUri(){
+        return imageUri;
     }
 
         // Create an instance of HttpPostTask and execute it

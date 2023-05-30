@@ -20,6 +20,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +44,11 @@ public class Question4Fragment extends Fragment {
     private ApiService apiService;
     private Context context;
 
+    static String finalDietType = "";
+
+    private SharedPreferences sharedPreferences;
+    private String email;
+
     public Question4Fragment() {
         // Required empty public constructor
     }
@@ -54,7 +60,9 @@ public class Question4Fragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_question4, container, false);
 
         SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@", "__");
 
         context = getContext();
         apiService = ApiService.getInstance(context);
@@ -82,8 +90,11 @@ public class Question4Fragment extends Fragment {
                     Toast.makeText(getContext(), "Please select a diet type", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                String finalDietType = dietType;
-                apiService.submitDietType(dietType, new ApiService.DataSubmitCallback() {
+                finalDietType = dietType;
+
+                JsonObject requestBody = new JsonObject();
+                requestBody.addProperty("dietType", finalDietType);
+                apiService.submitQuestionnaire(apiEmail,requestBody, new ApiService.DataSubmitCallback() {
                     @Override
                     public void onSuccess(ResponseModel response) {
                         Bundle bundle = new Bundle();
@@ -122,6 +133,10 @@ public class Question4Fragment extends Fragment {
         });
 
         return view;
+    }
+
+    public static String getDietType(){
+        return finalDietType;
     }
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {
 //

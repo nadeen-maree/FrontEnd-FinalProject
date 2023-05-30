@@ -19,6 +19,7 @@ import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 
@@ -41,11 +42,17 @@ public class Question8Fragment extends Fragment {
     private ApiService apiService;
     private Context context;
 
+    static String startingWeightString;
+    static String targetWeightString;
+    static String heightString;
     //private SharedPreferences sharedPreferences;
 
 
     private static final int MAX_WEIGHT_KG = 150;
     private static final int MAX_HEIGHT_CM = 250;
+
+    private SharedPreferences sharedPreferences;
+    private String email;
 
     public Question8Fragment() {
         // Required empty public constructor
@@ -56,7 +63,9 @@ public class Question8Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question8, container, false);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@", "__");
 
         context = getContext();
         apiService = ApiService.getInstance(context);
@@ -98,10 +107,16 @@ public class Question8Fragment extends Fragment {
                     return;
                 }
 
-                String startingWeightString = Integer.toString(startingWeight);
-                String targetWeightString = Integer.toString(targetWeight);
-                String heightString = Integer.toString(height);
-                apiService.submitUserDetails(startingWeightString, targetWeightString, heightString, new ApiService.DataSubmitCallback() {
+                startingWeightString = Integer.toString(startingWeight);
+                targetWeightString = Integer.toString(targetWeight);
+                heightString = Integer.toString(height);
+
+                JsonObject requestBody = new JsonObject();
+                requestBody.addProperty("startingWeight", startingWeightString);
+                requestBody.addProperty("targetWeight", targetWeightString);
+                requestBody.addProperty("height", heightString);
+
+                apiService.submitQuestionnaire(apiEmail ,requestBody, new ApiService.DataSubmitCallback() {
                     @Override
                     public void onSuccess(ResponseModel response) {
                         Bundle bundle = new Bundle();
@@ -140,6 +155,17 @@ public class Question8Fragment extends Fragment {
         return view;
     }
 
+    public static String getStartingWeight(){
+        return startingWeightString;
+    }
+
+    public static String getTargetWeight(){
+        return targetWeightString;
+    }
+
+    public static String getHeight(){
+        return heightString;
+    }
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {
 //
 //        @Override

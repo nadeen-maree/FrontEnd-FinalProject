@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonObject;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -30,12 +31,14 @@ import retrofit2.Response;
 
 public class Question2Fragment extends Fragment {
 
-    private TextView dateText;
+    private static TextView dateText;
     FloatingActionButton nextButton2;
 
     private ApiService apiService;
     private Context context;
 
+    private SharedPreferences sharedPreferences;
+    private String email;
     //private HttpRequestListener httpRequestListener;
 
     public Question2Fragment() {
@@ -47,7 +50,9 @@ public class Question2Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question2, container, false);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@", "__");
 
         context = getContext();
         apiService = ApiService.getInstance(context);
@@ -75,7 +80,10 @@ public class Question2Fragment extends Fragment {
                     return;
                 }
 
-                apiService.submitDate(date, new ApiService.DataSubmitCallback() {
+                JsonObject requestBody = new JsonObject();
+                requestBody.addProperty("date", date);
+
+                apiService.submitQuestionnaire(apiEmail, requestBody, new ApiService.DataSubmitCallback() {
                     @Override
                     public void onSuccess(ResponseModel response) {
                         Bundle bundle = new Bundle();
@@ -130,6 +138,11 @@ public class Question2Fragment extends Fragment {
                     }
                 }, year, month, day);
         datePickerDialog.show();
+    }
+
+    public static String getDate(){
+        String date = dateText.getText().toString();
+        return date;
     }
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {
 //

@@ -17,6 +17,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +40,11 @@ public class Question5Fragment extends Fragment {
     private ApiService apiService;
     private Context context;
 
+    static String finalFitnessLevel = "";
+
+    private SharedPreferences sharedPreferences;
+    private String email;
+
     public Question5Fragment() {
         // Required empty public constructor
     }
@@ -48,7 +54,9 @@ public class Question5Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question5, container, false);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@", "__");
 
         context = getContext();
         apiService = ApiService.getInstance(context);
@@ -73,8 +81,10 @@ public class Question5Fragment extends Fragment {
                 Toast.makeText(getContext(), "Please select a fitness level", Toast.LENGTH_SHORT).show();
                 return;
             }
-                String finalFitnessLevel = fitnessLevel;
-                apiService.submitFitnessLevel(fitnessLevel, new ApiService.DataSubmitCallback() {
+                finalFitnessLevel = fitnessLevel;
+                JsonObject requestBody = new JsonObject();
+                requestBody.addProperty("fitnessLevel", finalFitnessLevel);
+                apiService.submitQuestionnaire(apiEmail,requestBody, new ApiService.DataSubmitCallback() {
                     @Override
                     public void onSuccess(ResponseModel response) {
                         Bundle bundle = new Bundle();
@@ -113,6 +123,10 @@ public class Question5Fragment extends Fragment {
         });
 
         return view;
+    }
+
+    public static String getFitnessLevel(){
+        return finalFitnessLevel;
     }
 //    private class HttpPostTask extends AsyncTask<String, Void, String> {
 //

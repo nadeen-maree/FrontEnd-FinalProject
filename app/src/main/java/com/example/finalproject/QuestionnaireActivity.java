@@ -7,6 +7,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,7 +33,22 @@ public class QuestionnaireActivity extends AppCompatActivity {
             transaction.replace(R.id.fragment_container, question1Fragment);
             transaction.commit();
         }
+
+//        JsonObject requestBody = new JsonObject();
+//        requestBody.addProperty("name", Question1Fragment.getName());
+//        requestBody.addProperty("date", Question2Fragment.getDate()); // Replace with the actual date value
+//        requestBody.addProperty("gender", Question3Fragment.getGender());
+//        requestBody.addProperty("dietType", Question4Fragment.getDietType());
+//        requestBody.addProperty("fitnessLevel", Question5Fragment.getFitnessLevel());
+//        requestBody.addProperty("focusZones", new Gson().toJson(Question6Fragment.getFocusZones()));
+//        requestBody.addProperty("physicalLimitation", new Gson().toJson(Question7Fragment.getPhysicalLimitations()));
+//        requestBody.addProperty("startingWeight", Question8Fragment.getStartingWeight());
+//        requestBody.addProperty("targetWeight",  Question8Fragment.getTargetWeight());
+//        requestBody.addProperty("height",  Question8Fragment.getHeight());
+//        requestBody.addProperty("Image", Edit_Profile.getImageUri());
     }
+
+
 
 //    @Override
 //    public void onHttpPostComplete(String result) {
@@ -49,81 +67,81 @@ public class QuestionnaireActivity extends AppCompatActivity {
 //    public void onHttpGetComplete(String result) {
 //
 //    }
-
-    public void performHttpPostRequest(String url, String postData) {
-        new HttpPostTask().execute(url, postData);
-    }
-
-    private class HttpPostTask extends AsyncTask<String, Void, String> {
-
-        protected String doInBackground(String... params) {
-            String urlStr = params[0];
-            String postData = params[1];
-            String response = "";
-
-            try {
-                URL url = new URL(urlStr);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
-
-                // Write POST data to request body
-                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-                os.writeBytes(postData);
-                os.flush();
-                os.close();
-
-                // Read response from server
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    InputStream inputStream = conn.getInputStream();
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        response += line;
-                    }
-                } else {
-                    Toast.makeText(QuestionnaireActivity.this, "Unknown internal failure", Toast.LENGTH_SHORT).show();
-                    return null;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return response;
-        }
-
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                try {
-                    // Parse the JSON response
-                    JSONObject json = new JSONObject(result);
-
-                    // Extract data from the JSON response
-                    String message = json.getString("message");
-                    int status = json.getInt("status");
-
-                    // Perform actions or update UI based on the response
-                    if (status == HttpURLConnection.HTTP_OK) {
-                        // Success response
-                        Toast.makeText(QuestionnaireActivity.this, message, Toast.LENGTH_SHORT).show();
-
-                    } else {
-                        // Error response
-                        Toast.makeText(QuestionnaireActivity.this, "Unknown internal failure: " , Toast.LENGTH_SHORT).show();
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // Handle case when the result is null or empty
-                Toast.makeText(QuestionnaireActivity.this, "Empty response", Toast.LENGTH_SHORT).show();
-
-            }
-        }
-    }
+//
+//    public void performHttpPostRequest(String url, String postData) {
+//        new HttpPostTask().execute(url, postData);
+//    }
+//
+//    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//
+//        protected String doInBackground(String... params) {
+//            String urlStr = params[0];
+//            String postData = params[1];
+//            String response = "";
+//
+//            try {
+//                URL url = new URL(urlStr);
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setRequestMethod("POST");
+//                conn.setDoOutput(true);
+//                conn.setDoInput(true);
+//                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+//                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
+//
+//                // Write POST data to request body
+//                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+//                os.writeBytes(postData);
+//                os.flush();
+//                os.close();
+//
+//                // Read response from server
+//                int responseCode = conn.getResponseCode();
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    InputStream inputStream = conn.getInputStream();
+//                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//                    String line;
+//                    while ((line = bufferedReader.readLine()) != null) {
+//                        response += line;
+//                    }
+//                } else {
+//                    Toast.makeText(QuestionnaireActivity.this, "Unknown internal failure", Toast.LENGTH_SHORT).show();
+//                    return null;
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            return response;
+//        }
+//
+//        protected void onPostExecute(String result) {
+//            if (result != null) {
+//                try {
+//                    // Parse the JSON response
+//                    JSONObject json = new JSONObject(result);
+//
+//                    // Extract data from the JSON response
+//                    String message = json.getString("message");
+//                    int status = json.getInt("status");
+//
+//                    // Perform actions or update UI based on the response
+//                    if (status == HttpURLConnection.HTTP_OK) {
+//                        // Success response
+//                        Toast.makeText(QuestionnaireActivity.this, message, Toast.LENGTH_SHORT).show();
+//
+//                    } else {
+//                        // Error response
+//                        Toast.makeText(QuestionnaireActivity.this, "Unknown internal failure: " , Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            } else {
+//                // Handle case when the result is null or empty
+//                Toast.makeText(QuestionnaireActivity.this, "Empty response", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        }
+//    }
 }
