@@ -2,7 +2,6 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-![App Screenshots](/Users/nadeen.maree/Downloads/FinalProject 2/app/build/intermediates/packaged_res/debug/drawable-v24/logo_circle_green.png)
 
 Welcome to the Health Fitness Android App repository! This app is designed to revolutionize your fitness and nutrition journey using cutting-edge AI algorithms, providing personalized fitness plans, nutrition guidance, fitness challenges, and more.
 
