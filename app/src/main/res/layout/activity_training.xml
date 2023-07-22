@@ -285,7 +285,4 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.55"
         app:layout_constraintGuide_begin="20dp" />
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

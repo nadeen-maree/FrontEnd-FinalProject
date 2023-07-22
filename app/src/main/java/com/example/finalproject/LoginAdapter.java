@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 public class LoginAdapter extends FragmentPagerAdapter {
-
     private Context context;
     int totalTabs;
 
@@ -21,7 +20,6 @@ public class LoginAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return totalTabs;
     }
-
 
     public Fragment getItem(int position){
         switch (position){
@@ -47,6 +45,5 @@ public class LoginAdapter extends FragmentPagerAdapter {
                 return null;
         }
     }
-
 }
 

@@ -426,6 +426,4 @@
             app:layout_constraintStart_toEndOf="@+id/a10"
             app:layout_constraintTop_toTopOf="@+id/a10" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

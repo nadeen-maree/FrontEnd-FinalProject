@@ -10,11 +10,9 @@ import android.widget.TextView;
 
 import com.app.progresviews.ProgressWheel;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
@@ -25,15 +23,11 @@ import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.concurrent.TimeUnit;
-import com.google.android.gms.common.Scopes;
-
 
 public class Walk_Tracker extends AppCompatActivity  implements  GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     TextView personal_plan, food, challenges, user_profile;
     FloatingActionButton exe;
-
     private GoogleApiClient mGoogleApiClient;
-
     TextView targetText;
     Button googleFitButton;
     ProgressWheel progressWheel;
@@ -52,20 +46,6 @@ public class Walk_Tracker extends AppCompatActivity  implements  GoogleApiClient
         targetText = findViewById(R.id.targetText);
         googleFitButton = findViewById(R.id.googleFitButton);
         progressWheel = findViewById(R.id.wheelProgress);
-
-        int targetSteps = Integer.parseInt(targetText.getText().toString().replaceAll("[^\\d]", ""));
-        int maxLength = String.valueOf(targetSteps).length(); // get length of targetCalories as max length
-
-
-//
-//        // Set up the Google API client
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addApi(Fitness.HISTORY_API)
-//                .addApi(Fitness.SENSORS_API)
-//                .addScope(new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE))
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .build();
 
         // Set up the OnClickListener for the Google Fit button
         googleFitButton.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +86,14 @@ public class Walk_Tracker extends AppCompatActivity  implements  GoogleApiClient
                 startActivity(intent);
             }
         });
+
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(Walk_Tracker.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -143,8 +131,6 @@ public class Walk_Tracker extends AppCompatActivity  implements  GoogleApiClient
                 }
             }
         });
-
-
     }
 
     public int percentage(String calorie) {
@@ -166,5 +152,4 @@ public class Walk_Tracker extends AppCompatActivity  implements  GoogleApiClient
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // Handle the connection failure
     }
-
 }

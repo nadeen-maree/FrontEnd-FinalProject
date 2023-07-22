@@ -290,15 +290,12 @@
                         android:textColor="@color/reply_black_800"
                         android:textSize="18sp" />
                 </LinearLayout>
-
                 </androidx.appcompat.widget.LinearLayoutCompat>
-
 
                 <com.google.android.material.circularreveal.CircularRevealRelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="6dp">
-
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="wrap_content"
@@ -318,7 +315,6 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
       </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <Button
         android:id="@+id/googleFitButton"
         android:layout_width="300dp"
@@ -335,7 +331,4 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/constraintLayout" />
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

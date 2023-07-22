@@ -17,25 +17,17 @@ import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 public class FastingDetails extends AppCompatActivity {
     ImageView back;
     CircularProgressBar circularProgressBar;
-    TextView percentageTextView;
-    TextView timerTextView, fastingHours;
+    TextView percentageTextView, timerTextView, fastingHours;
     Button startStopButton;
-
     private CountDownTimer countDownTimer;
     private long timeRemaining;
     private boolean isTimerRunning;
-
-    int fastingPeriod;
-
+    int fastingPeriod, constraintLayoutId;
     private static final String RERUN_KEY = "rerun";
-
     private static final String TIMER_RUNNING_KEY = "timerRunning";
     private static final String TIME_REMAINING_KEY = "timeRemaining";
     private static final String FASTING_PERIOD_KEY = "fastingPeriod";
-
     private SharedPreferences sharedPreferences;
-
-    private int constraintLayoutId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +52,6 @@ public class FastingDetails extends AppCompatActivity {
         timerTextView = findViewById(R.id.timer_text_view);
         startStopButton = findViewById(R.id.start_stop_button);
         fastingHours = findViewById(R.id.fasting_hours);
-
-
         back = findViewById(R.id.back);
 
         back.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +62,6 @@ public class FastingDetails extends AppCompatActivity {
             }
         });
 
-        int fastingPeriod = getIntent().getIntExtra("fastingPeriod", 0);
         constraintLayoutId = getIntent().getIntExtra("constraintLayoutId", 0);
 
         // Assign the fastingPeriod based on the constraintLayoutId
@@ -102,8 +91,6 @@ public class FastingDetails extends AppCompatActivity {
                 }
             }
         });
-
-
 
         // Restore the state if available
         if (savedInstanceState != null) {
@@ -166,7 +153,6 @@ public class FastingDetails extends AppCompatActivity {
         setRerunFlag(true);
     }
 
-
     private void startTimer() {
         if (timeRemaining == 0) {
             timeRemaining = fastingPeriod * 60 * 60 * 1000; // convert fastingPeriod to milliseconds
@@ -219,5 +205,4 @@ public class FastingDetails extends AppCompatActivity {
         percentageTextView.setText(percentage);
 
     }
-
 }

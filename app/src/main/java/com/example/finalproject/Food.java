@@ -1,11 +1,11 @@
 package com.example.finalproject;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -13,7 +13,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class Food extends AppCompatActivity {
     TextView personal_plan, food, challenges, user_profile;
     FloatingActionButton exe;
-    Button view_meal;
+    ConstraintLayout viewMeal1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,7 @@ public class Food extends AppCompatActivity {
         challenges = findViewById(R.id.tab4_txt);
         user_profile = findViewById(R.id.tab5_txt);
         exe = findViewById(R.id.training_btn);
-        view_meal = findViewById(R.id.view_meal);
+        viewMeal1 = findViewById(R.id.meal1ConstraintLayout);
 
         personal_plan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +59,15 @@ public class Food extends AppCompatActivity {
             }
         });
 
-        view_meal.setOnClickListener(new View.OnClickListener() {
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(Food.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        viewMeal1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent= new Intent(Food.this, Specific_Meal.class);

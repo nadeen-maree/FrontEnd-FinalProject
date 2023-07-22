@@ -278,7 +278,7 @@
                         android:id="@+id/targetText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1,200"
+                        android:text="2,000"
                         android:layout_marginRight="5dp"
                         android:textColor="@color/reply_black_800"
                         android:textSize="18sp" />
@@ -478,6 +478,15 @@
             app:layout_constraintTop_toBottomOf="@+id/dinner"
             app:layout_constraintVertical_bias="0.0"
             app:layout_constraintWidth_percent=".5" />
+
+        <Button
+            android:id="@+id/save"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:text="Save"
+            android:background="@drawable/round_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

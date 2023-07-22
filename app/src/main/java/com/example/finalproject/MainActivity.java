@@ -11,9 +11,7 @@ import android.widget.TextView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
-
     ImageView fasting, training, add_food, water, walk, profile;
-    TextView fasting_txt, training_txt, add_food_txt, water_txt, walk_txt, profile_txt;
     TextView personal_plan, food, challenges, user_profile;
     FloatingActionButton exe;
 
@@ -33,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
         challenges = findViewById(R.id.tab4_txt);
         user_profile = findViewById(R.id.tab5_txt);
         exe = findViewById(R.id.training_btn);
-
-
 
         fasting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,5 +112,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

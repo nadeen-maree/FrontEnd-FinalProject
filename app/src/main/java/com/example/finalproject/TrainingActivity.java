@@ -66,5 +66,13 @@ public class TrainingActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(TrainingActivity.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

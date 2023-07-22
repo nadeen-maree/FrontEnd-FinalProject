@@ -1,7 +1,5 @@
 package com.example.finalproject;
 
-import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
-
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,32 +16,37 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 
 public class Specific_Challenge extends AppCompatActivity {
-
     ImageView challengeImage, back;
     TextView challengeName, difficultyLevel, description;
     Button joinButton;
-
     int constraintLayoutId;
-
-    SharedPreferences sharedPreferences = Specific_Challenge.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
-    String email = sharedPreferences.getString("email", "");
-    String apiEmail = email.replaceFirst("@","__");
-
+    String apiEmail = "";
+    String specificChallengeName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_specific_challenge);
+
+        SharedPreferences sharedPreferences = Specific_Challenge.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
+        apiEmail = email.replaceFirst("@", "__");
+
+        specificChallengeName = getIntent().getStringExtra("challengeName");
 
         challengeImage = findViewById(R.id.challenge_image);
         back = findViewById(R.id.back);
@@ -55,7 +58,7 @@ public class Specific_Challenge extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(Specific_Challenge.this, Challenges.class);
+                Intent intent = new Intent(Specific_Challenge.this, Challenges.class);
                 startActivity(intent);
             }
         });
@@ -68,6 +71,7 @@ public class Specific_Challenge extends AppCompatActivity {
 
         // Execute the API request
         new FetchChallengeDetailsTask().execute();
+        //new LoadImageTask().execute();
 
         joinButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,14 +80,12 @@ public class Specific_Challenge extends AppCompatActivity {
                 new SignUpChallengeTask().execute(challengeNameValue);
             }
         });
-
-        new FetchChallengeDetailsTask().execute();
-
     }
-    private class FetchChallengeDetailsTask extends AsyncTask<Void, Void, JSONObject> {
+
+    private class FetchChallengeDetailsTask extends AsyncTask<Void, Void, JSONArray> {
 
         @Override
-        protected JSONObject doInBackground(Void... voids) {
+        protected JSONArray doInBackground(Void... voids) {
             String apiUrl = "http://10.0.2.2:8181/challenge/" + apiEmail;
 
             try {
@@ -94,119 +96,128 @@ public class Specific_Challenge extends AppCompatActivity {
                 int responseCode = connection.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     InputStream inputStream = connection.getInputStream();
-                    String jsonResponse = convertInputStreamToString(inputStream);
-                    return new JSONObject(jsonResponse);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                    return new JSONArray(response.toString());
                 }
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
 
         @Override
-        protected void onPostExecute(JSONObject challengeObject) {
-            if (challengeObject != null) {
+        protected void onPostExecute(JSONArray challengeArray) {
+            if (challengeArray != null) {
                 try {
-                    String challengeNameValue = challengeObject.getString("challengeName");
-                    String difficultyLevelValue = challengeObject.getString("difficultyLevel");
-                    String imageUri = challengeObject.getString("image");
-                    String descriptionValue = challengeObject.getString("description");
-
-                    challengeName.setText(challengeNameValue);
-                    difficultyLevel.setText(difficultyLevelValue);
-                    description.setText(descriptionValue);
-
-                    // Load the challenge image using the provided URI
-                    new LoadImageTask().execute(imageUri);
-
+                    for (int i = 0; i < challengeArray.length(); i++) {
+                        JSONObject challengeObject = challengeArray.getJSONObject(i);
+                        String challengeNameValue = challengeObject.getString("challengeName");
+                        String difficultyLevelValue = challengeObject.getString("difficultyLevel");
+                        String imageUri = challengeObject.getString("image");
+                        String descriptionValue = challengeObject.getString("description");
+                        if(Objects.equals(specificChallengeName, challengeNameValue)) {
+                            // Set the challenge details in the UI
+                            challengeName.setText(challengeNameValue);
+                            difficultyLevel.setText(difficultyLevelValue);
+                            description.setText(descriptionValue);
+                            // Load the challenge image using the provided URI
+                            new LoadImageTask().execute(imageUri);
+                            break;
+                        }
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         }
-    }
 
-    private class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            String imageUri = params[0];
-            try {
-                URL url = new URL(imageUri);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                return BitmapFactory.decodeStream(input);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            if (bitmap != null) {
-                challengeImage.setImageBitmap(bitmap);
-            }
-        }
-    }
-
-    private class SignUpChallengeTask extends AsyncTask<String, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(String... params) {
-            String apiUrl = "http://10.0.2.2:8181/challenge/" + apiEmail;
-
-            try {
-                URL url = new URL(apiUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("PUT");
-                connection.setRequestProperty("Content-Type", "application/json");
-                connection.setDoOutput(true);
-
-                JSONObject requestBody = new JSONObject();
-                requestBody.put("challengeName", params[0]);
-
-                OutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
-                outputStream.write(requestBody.toString().getBytes());
-                outputStream.flush();
-
-                int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    InputStream inputStream = connection.getInputStream();
-                    String jsonResponse = convertInputStreamToString(inputStream);
-                    JSONObject response = new JSONObject(jsonResponse);
-                    return response.getBoolean("joined");
+        private class LoadImageTask extends AsyncTask<String, Void, Bitmap> {
+            @Override
+            protected Bitmap doInBackground(String... params) {
+                String imageUri = params[0];
+                try {
+                    URL url = new URL(imageUri);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    InputStream input = connection.getInputStream();
+                    return BitmapFactory.decodeStream(input);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
+                return null;
             }
 
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean joined) {
-            if (joined) {
-                Toast.makeText(Specific_Challenge.this, "Challenge joined successfully", Toast.LENGTH_SHORT).show();
-                joinButton.setText("Joined");
-            } else {
-                Toast.makeText(Specific_Challenge.this, "Failed to join the challenge", Toast.LENGTH_SHORT).show();
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                if (bitmap != null) {
+                    challengeImage.setImageBitmap(bitmap);
+                }
             }
         }
     }
 
-    private String convertInputStreamToString(InputStream inputStream) throws IOException {
-        StringBuilder response = new StringBuilder();
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            response.append(new String(buffer, 0, bytesRead));
+        private class SignUpChallengeTask extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected String doInBackground(String... params) {
+                String apiUrl = "http://10.0.2.2:8181/challenge/" + apiEmail;
+
+                try {
+                    URL url = new URL(apiUrl);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("PUT");
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setDoOutput(true);
+
+                    JSONObject requestBody = new JSONObject();
+                    requestBody.put("challengeName", params[0]);
+
+                    OutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
+                    outputStream.write(requestBody.toString().getBytes());
+                    outputStream.flush();
+
+                    // Read the response from the server
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        // Successful response
+                        InputStream inputStream = connection.getInputStream();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            response.append(line);
+                        }
+                        reader.close();
+                        // Return the response as a string
+                        return response.toString();
+
+                    } else {
+                        Toast.makeText(Specific_Challenge.this, "Unknown internal failure", Toast.LENGTH_SHORT).show();
+                        return null;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                if (result != null) {
+                    // Handle the response from the server
+                    joinButton.setText("JOINED");
+
+                } else {
+                    // Error handling for unsuccessful response
+                    Toast.makeText(Specific_Challenge.this, "Can't join this challenge", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
-        inputStream.close();
-        return response.toString();
     }
-}

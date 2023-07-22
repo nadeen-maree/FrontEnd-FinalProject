@@ -6,7 +6,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,7 +29,6 @@ public class FastingActivity extends AppCompatActivity {
         fasting16Hours = findViewById(R.id.fasting_16_hours_constraint_layout);
         fasting18Hours = findViewById(R.id.fasting_18_hours_constraint_layout);
         fasting20Hours = findViewById(R.id.fasting_20_hours_constraint_layout);
-
 
         personal_plan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +58,14 @@ public class FastingActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent= new Intent(FastingActivity.this, TrainingActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(FastingActivity.this, ProfileActivity.class);
                 startActivity(intent);
             }
         });

@@ -1,12 +1,10 @@
 package com.example.finalproject;
 
 import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.fragment.app.Fragment;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStream;
@@ -28,21 +23,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class LoginTabFragment extends Fragment {
-
-     EditText email;
-     EditText pass;
+     EditText email, pass;
      TextView forgetPass;
      private Button login;
      float v = 0;
-
     static final String SHARED_PREFS_KEY = "myPrefs";
     private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.login_tab_fragment, container, false);
-
-        //SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
 
         sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
@@ -69,12 +59,9 @@ public class LoginTabFragment extends Fragment {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 String userEmail = email.getText().toString();
                 String logInEmail = userEmail.replaceFirst("@","__");
-                //editor.putString("userEmail", userEmail).apply();
                 String userPassword = pass.getText().toString();
-                //editor.putString("userPassword", userPassword).apply();
 
                 HttpPostTask task = new HttpPostTask();
                 task.execute("http://10.0.2.2:8181/users/login", logInEmail, userPassword);
@@ -86,16 +73,12 @@ public class LoginTabFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("email", sharedEmail);
                 editor.apply();
-
-
             }
         });
-
         return root;
     }
 
     private class HttpPostTask extends AsyncTask<String, Void, String> {
-
         protected String doInBackground(String... params) {
             String response = "";
             try {
@@ -142,5 +125,4 @@ public class LoginTabFragment extends Fragment {
             }
         }
     }
-
 }

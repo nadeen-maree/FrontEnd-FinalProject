@@ -1,51 +1,41 @@
 package com.example.finalproject;
 
 import static android.content.Context.MODE_PRIVATE;
-
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
-
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.Toast;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Response;
-
 
 public class Question6Fragment extends Fragment {
-
-
     CheckBox chestCheckbox, backCheckbox, armsCheckbox, legsCheckbox, absCheckbox;
     private FloatingActionButton nextButton6;
-
-    private ApiService apiService;
     private Context context;
+    ArrayList<String> selectedFocusZones;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     public Question6Fragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        context = requireContext();
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        editor = sharedPreferences.edit();
     }
 
     @Override
@@ -53,10 +43,6 @@ public class Question6Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question6, container, false);
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
-
-        context = getContext();
-        apiService = ApiService.getInstance(context);
 
         chestCheckbox = view.findViewById(R.id.chest_checkbox);
         backCheckbox = view.findViewById(R.id.back_checkbox);
@@ -83,7 +69,7 @@ public class Question6Fragment extends Fragment {
                 }
 
                 // Create a list to store the selected focus zones
-                ArrayList<String> selectedFocusZones = new ArrayList<>();
+                selectedFocusZones = new ArrayList<>();
 
                 // Check each checkbox and add its label to the list if it's checked
                 if (chestChecked) {
@@ -102,107 +88,29 @@ public class Question6Fragment extends Fragment {
                     selectedFocusZones.add(absCheckbox.getText().toString());
                 }
 
+                // Save the selected focus zones to shared preferences
+                String focusZonesString = TextUtils.join(",", selectedFocusZones);
+                editor.putString("focusZones", focusZonesString).apply();
 
-                apiService.submitFocusZones(selectedFocusZones, new ApiService.DataSubmitCallback() {
-                    @Override
-                    public void onSuccess(ResponseModel response) {
-                        Bundle bundle = new Bundle();
-                        bundle.putStringArrayList("selectedFocusZones", selectedFocusZones);
-                        Question7Fragment question7Fragment = new Question7Fragment();
-                        question7Fragment.setArguments(bundle);
-                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.fragment_container, question7Fragment);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                    }
+                JsonObject requestBody = new JsonObject();
+                JsonArray focusZonesArray = new JsonArray();
 
-                    @Override
-                    public void onError(String errorMessage) {
-                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
-                    }
+                for (String focusZones : selectedFocusZones) {
+                    focusZonesArray.add(focusZones);
+                }
 
-                    @Override
-                    public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                        if (response.isSuccessful()) {
-                            ResponseModel data = response.body();
-                            onSuccess(data);
-                        } else {
-                            String errorMessage = "Error: " + response.code();
-                            onError(errorMessage);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResponseModel> call, Throwable throwable) {
-                        String errorMessage = "Request failed: " + throwable.getMessage();
-                        onError(errorMessage);
-                    }
-                });
+                 Question7Fragment question7Fragment = new Question7Fragment();
+                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                 transaction.replace(R.id.fragment_container, question7Fragment);
+                 transaction.addToBackStack(null);
+                 transaction.commit();
             }
         });
-
         return view;
     }
 
-//    private class HttpPostTask extends AsyncTask<String, Void, String> {
-//        @Override
-//        protected String doInBackground(String... params) {
-//            String url = params[0];
-//            String selectedFocusZonesString = params[1];
-//
-//            try {
-//                URL obj = new URL(url);
-//                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-//
-//                // Set the request method and headers
-//                con.setRequestMethod("POST");
-//                con.setRequestProperty("Content-Type", "application/json");
-//
-//                // Create the request body
-//                JSONObject requestBody = new JSONObject();
-//                requestBody.put("selectedFocusZones", selectedFocusZonesString);
-//
-//                // Convert the request body to a byte array and set it as the request entity
-//                byte[] requestBodyBytes = requestBody.toString().getBytes("UTF-8");
-//                con.setDoOutput(true);
-//                con.setFixedLengthStreamingMode(requestBodyBytes.length);
-//                OutputStream outputStream = con.getOutputStream();
-//                outputStream.write(requestBodyBytes);
-//                outputStream.flush();
-//                outputStream.close();
-//
-//                // Read the response from the server
-//                int responseCode = con.getResponseCode();
-//                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-//                String inputLine;
-//                StringBuilder response = new StringBuilder();
-//                while ((inputLine = in.readLine()) != null) {
-//                    response.append(inputLine);
-//                }
-//                in.close();
-//
-//                // Return the response from the server
-//                return response.toString();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String response) {
-//            super.onPostExecute(response);
-//
-//            if (response != null) {
-//                // Handle the response from the server
-//                Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
-//            } else {
-//                // Handle the error
-//                Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//
-//
-//    }
+    public String getFocusZones() {
+        // Retrieve the selected focus zones from shared preferences
+        return sharedPreferences.getString("focusZones", "");
+    }
 }

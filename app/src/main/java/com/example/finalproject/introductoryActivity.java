@@ -18,11 +18,9 @@ public class introductoryActivity extends AppCompatActivity {
 
     ImageView logo, appName, splashImg;
     LottieAnimationView lottieAnimationView;
-
     private static final int NUM_PAGES = 3;
     private ViewPager viewPager;
     private ScreenSlidePagerAdapter pagerAdapter;
-
     Animation anim;
 
     @Override
@@ -46,7 +44,6 @@ public class introductoryActivity extends AppCompatActivity {
         logo.animate().translationY(2000).setDuration(1000).setStartDelay(4000);
         appName.animate().translationY(2000).setDuration(1000).setStartDelay(4000);
         lottieAnimationView.animate().translationY(2000).setDuration(1000).setStartDelay(4000);
-
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
@@ -77,4 +74,4 @@ public class introductoryActivity extends AppCompatActivity {
             return NUM_PAGES;
         }
     }
-    }
+}

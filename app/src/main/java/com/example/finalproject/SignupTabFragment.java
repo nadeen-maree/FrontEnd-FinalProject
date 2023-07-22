@@ -11,12 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,22 +26,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class SignupTabFragment extends Fragment {
-
-    EditText email;
-    EditText mobileNum;
-    EditText pass;
-    EditText confirmPass;
+    EditText email, mobileNum, pass, confirmPass;
     Button signup;
     float v = 0;
-
     static final String SHARED_PREFS_KEY = "myPrefs";
     private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.signup_tab_fragment, container, false);
-
-        //SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
 
         sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
 
@@ -76,18 +66,12 @@ public class SignupTabFragment extends Fragment {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), QuestionnaireActivity.class);
-                startActivity(intent);
 
                 String userEmail = email.getText().toString();
                 String signUpEmail = userEmail.replaceFirst("@","__");
-                //editor.putString("userEmail", userEmail).apply();
                 String userPassword = pass.getText().toString();
-               // editor.putString("userPassword", userPassword).apply();
                 String userMobileNumber = mobileNum.getText().toString();
-               // editor.putString("userMobileNumber", userMobileNumber).apply();
                 String userConfirmPassword = confirmPass.getText().toString();
-               // editor.putString("userConfirmPassword", userConfirmPassword).apply();
 
                 SignupTabFragment.HttpPostTask task = new SignupTabFragment.HttpPostTask();
                 task.execute("http://10.0.2.2:8181/users/login", signUpEmail, userPassword,userMobileNumber, userConfirmPassword);
@@ -96,9 +80,11 @@ public class SignupTabFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("email", sharedEmail);
                 editor.apply();
+
+                    Intent intent = new Intent(getActivity(), QuestionnaireActivity.class);
+                    startActivity(intent);
             }
         });
-
         return root;
     }
     private class HttpPostTask extends AsyncTask<String, Void, String> {
@@ -140,7 +126,6 @@ public class SignupTabFragment extends Fragment {
             }
             return response;
         }
-
 
         protected void onPostExecute(String result) {
             try {

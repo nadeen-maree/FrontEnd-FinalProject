@@ -1,15 +1,12 @@
 package com.example.finalproject;
 
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,25 +22,14 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -63,15 +49,15 @@ public class Edit_Profile extends AppCompatActivity {
     NumberPicker startingWeightPicker, targetWeightPicker, heightPicker;
     Button genderOkButton, dietTypeOkButton, fitnessLevelOkButton, focusZonesOkButton, physicalLimitationsOkButton,
             startingWeightButton, targetWeightButton, heightButton, saveButton;
-
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int MAX_WEIGHT_KG = 150;
     private static final int MAX_HEIGHT_CM = 250;
-    private Uri selectedImageUri; // declare the URI variable outside of the method
-
+    private Uri selectedImageUri;
     private ApiService apiService;
     private Context context;
-
+    private SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+    private String email, apiEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +65,12 @@ public class Edit_Profile extends AppCompatActivity {
         setContentView(R.layout.activity_edit_profile);
 
         context = this;
+        apiService = ApiService.getInstance(getApplicationContext());
 
-        apiService = ApiService.getInstance(context);
+        editor = Edit_Profile.this.getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        apiEmail = email.replaceFirst("@", "__");
 
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
@@ -136,7 +126,7 @@ public class Edit_Profile extends AppCompatActivity {
         personal_plan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(Edit_Profile.this, MainActivity.class);
+                Intent intent = new Intent(Edit_Profile.this, MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -144,7 +134,7 @@ public class Edit_Profile extends AppCompatActivity {
         food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(Edit_Profile.this, Food.class);
+                Intent intent = new Intent(Edit_Profile.this, Food.class);
                 startActivity(intent);
             }
         });
@@ -152,7 +142,7 @@ public class Edit_Profile extends AppCompatActivity {
         challenges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(Edit_Profile.this, Challenges.class);
+                Intent intent = new Intent(Edit_Profile.this, Challenges.class);
                 startActivity(intent);
             }
         });
@@ -160,13 +150,19 @@ public class Edit_Profile extends AppCompatActivity {
         exe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(Edit_Profile.this, TrainingActivity.class);
+                Intent intent = new Intent(Edit_Profile.this, TrainingActivity.class);
                 startActivity(intent);
             }
         });
 
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Edit_Profile.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
 
-// Set an OnClickListener to the CircleImageView
         profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,7 +172,6 @@ public class Edit_Profile extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
             }
         });
-
 
         userName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -190,7 +185,6 @@ public class Edit_Profile extends AppCompatActivity {
                 String name = userName.getText().toString().trim();
                 if (!name.isEmpty()) {
                     // Store the value somewhere, such as in a SharedPreferences
-                    SharedPreferences.Editor editor = getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
                     editor.putString("name", name);
                     editor.apply();
                 }
@@ -202,8 +196,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-
-        // Set click listener for the genderText
         genderText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -211,8 +203,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-
-        // Set click listener for the okButton
         genderOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -220,7 +210,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-        // Set click listener for the genderText
         dietTypeText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -228,8 +217,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-
-        // Set click listener for the okButton
         dietTypeOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -237,7 +224,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-        // Set click listener for the fitnessLevelEditText
         fitnessLevelText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -245,8 +231,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-
-        // Set click listener for the okButton
         fitnessLevelOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -254,7 +238,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-        // Set click listener for the fitnessLevelEditText
         focusZonesText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -262,15 +245,12 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-
-        // Set click listener for the okButton
         focusZonesOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onFocusZonesOkButtonClick(view);
             }
         });
-
 
         birthDateText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -279,7 +259,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-        // Set click listener for physical limitations EditText
         physicalLimitationsText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -287,7 +266,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-        // Set click listeners for physical limitations checkboxes
         noneCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -336,7 +314,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-        // Set click listener for physical limitations EditText
         physicalLimitationsOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -344,8 +321,6 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-
-        // Set up the starting weight picker
         startingWeightPicker.setMinValue(0);
         startingWeightPicker.setMaxValue(MAX_WEIGHT_KG);
         startingWeightPicker.setValue(70);
@@ -369,9 +344,8 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
 
-
         // Height
-        // Set up the target weight picker
+        // Set up the height picker
         heightPicker.setMinValue(0);
         heightPicker.setMaxValue(MAX_HEIGHT_CM);
         heightPicker.setValue(160);
@@ -387,11 +361,12 @@ public class Edit_Profile extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 onSaveButtonClick();
+                Intent intent = new Intent(Edit_Profile.this, ProfileActivity.class);
+                startActivity(intent);
             }
         });
     }
 
-    // Override onActivityResult to handle the result of the intent
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -404,6 +379,13 @@ public class Edit_Profile extends AppCompatActivity {
             Log.d("DEBUG", "selectedImageUri before: " + selectedImageUri);
 
             selectedImageUri = imageUri;
+
+            // Update the value of imageUri
+            String image = imageUri.toString().trim();
+
+            // Save the updated value in SharedPreferences
+            editor.putString("Image", image);
+            editor.apply();
 
             // add this log statement to check the value of selectedImageUri after it has been assigned
             Log.d("DEBUG", "selectedImageUri after: " + selectedImageUri);
@@ -435,6 +417,8 @@ public class Edit_Profile extends AppCompatActivity {
         RadioButton selectedRadioButton = findViewById(selectedId);
         String selectedText = selectedRadioButton.getText().toString();
         genderText.setText(selectedText);
+        String gender = genderText.getText().toString().trim();
+        editor.putString("gender", gender).apply();
     }
 
     // Called when the dietTypeText is clicked
@@ -455,6 +439,8 @@ public class Edit_Profile extends AppCompatActivity {
         RadioButton selectedRadioButton = findViewById(selectedId);
         String selectedText = selectedRadioButton.getText().toString();
         dietTypeText.setText(selectedText);
+        String dietType = dietTypeText.getText().toString().trim();
+        editor.putString("dietType", dietType).apply();
     }
 
     // Called when the fitnessLevelText is clicked
@@ -475,11 +461,13 @@ public class Edit_Profile extends AppCompatActivity {
         RadioButton selectedRadioButton = findViewById(selectedId);
         String selectedText = selectedRadioButton.getText().toString();
         fitnessLevelText.setText(selectedText);
+        String fitnessLevel = fitnessLevelText.getText().toString().trim();
+        editor.putString("fitnessLevel", fitnessLevel).apply();
     }
 
     // Called when the focusZonesText is clicked
     public void showFocusZonesOptions(View view) {
-            focusZonesContainer.setVisibility(View.VISIBLE);
+        focusZonesContainer.setVisibility(View.VISIBLE);
     }
 
     public void onFocusZonesOkButtonClick(View view) {
@@ -508,12 +496,15 @@ public class Edit_Profile extends AppCompatActivity {
 
         TextView focusZonesTextView = findViewById(R.id.focus_zones_text);
         focusZonesTextView.setText(selectedZonesText);
-
+        String focusZones = focusZonesTextView.getText().toString().trim();
+        String[] focusZonesArray = focusZones.split(",");
+        ArrayList<String> focusZonesArrayList = new ArrayList<>(Arrays.asList(focusZonesArray));
+        editor.putString("focusZones", focusZonesArrayList.toString()).apply();
         focusZonesContainer.setVisibility(View.GONE);
     }
 
     public void showPhysicalLimitationsOptions(View view) {
-            physicalLimitationsCheckboxContainer.setVisibility(View.VISIBLE);
+        physicalLimitationsCheckboxContainer.setVisibility(View.VISIBLE);
     }
 
     private void onPhysicalLimitationsOkButtonClick(View view) {
@@ -538,11 +529,13 @@ public class Edit_Profile extends AppCompatActivity {
             sb.setLength(sb.length() - 2);
         }
 
-        // Set the physical limitations text to the selected options
         String physicalLimitations = sb.toString();
         physicalLimitationsText.setText(physicalLimitations);
+        String physicalLimitation = physicalLimitationsText.getText().toString().trim();
+        String[] physicalLimitationArray = physicalLimitation.split(",");
+        ArrayList<String> physicalLimitationArrayList = new ArrayList<>(Arrays.asList(physicalLimitationArray));
+        editor.putString("physicalLimitations", physicalLimitationArrayList.toString());
 
-        // Hide the checkboxes container
         physicalLimitationsCheckboxContainer.setVisibility(View.GONE);
     }
 
@@ -561,18 +554,24 @@ public class Edit_Profile extends AppCompatActivity {
                     }
                 }, year, month, day);
         datePickerDialog.show();
+
+        String date = birthDateText.getText().toString().trim();
+        editor.putString("date", date).apply();
     }
 
     public void showStartingWeightPicker(View view) {
         startingWeightPickerContainer.setVisibility(View.VISIBLE);
     }
+
     private void onStartingWeightOkButtonClick(View view) {
         startingWeightPickerContainer.setVisibility(View.GONE);
         // Get the selected weight from the picker
-        int startingWeight = startingWeightPicker.getValue();
+        int startingWeightInt = startingWeightPicker.getValue();
 
         // Update the starting weight text
-        startingWeightText.setText(String.valueOf(startingWeight));
+        startingWeightText.setText(String.valueOf(startingWeightInt));
+        String startingWeight = startingWeightText.getText().toString().trim();
+        editor.putString("startingWeight", startingWeight).apply();
     }
 
     public void showTargetWeightPicker(View view) {
@@ -582,10 +581,12 @@ public class Edit_Profile extends AppCompatActivity {
     private void onTargetWeightOkButtonClick(View view) {
         targetWeightPickerContainer.setVisibility(View.GONE);
         // Get the selected weight from the picker
-        int targetWeight = targetWeightPicker.getValue();
+        int targetWeightInt = targetWeightPicker.getValue();
 
         // Update the starting weight text
-        targetWeightText.setText(String.valueOf(targetWeight));
+        targetWeightText.setText(String.valueOf(targetWeightInt));
+        String targetWeight = targetWeightText.getText().toString().trim();
+        editor.putString("targetWeight", targetWeight).apply();
     }
 
     public void showHeightPicker(View view) {
@@ -593,70 +594,65 @@ public class Edit_Profile extends AppCompatActivity {
     }
 
     private void onHeightOkButtonClick(View view) {
-        // Get the selected height value from the picker
-        int height = heightPicker.getValue();
+        int heightInt = heightPicker.getValue();
 
-        // Set the selected height value to the height EditText
-        heightText.setText(String.valueOf(height));
+        heightText.setText(String.valueOf(heightInt));
+        String height = heightText.getText().toString().trim();
+        editor.putString("height", height).apply();
 
-        // Hide the height picker container
         heightPickerContainer.setVisibility(View.GONE);
     }
 
-
     private void onSaveButtonClick() {
-        SharedPreferences prefs = getSharedPreferences("myPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-
-        String name = userName.getText().toString();
-        String date = birthDateText.getText().toString();
-        String gender = genderText.getText().toString();
-        String dietType = dietTypeText.getText().toString();
-        String fitnessLevel = fitnessLevelText.getText().toString();
-        String focusZones = focusZonesText.getText().toString();
+        // Get the values from the UI
+        String name = userName.getText().toString().trim();
+        String gender = genderText.getText().toString().trim();
+        String dietType = dietTypeText.getText().toString().trim();
+        String fitnessLevel = fitnessLevelText.getText().toString().trim();
+        String focusZones = focusZonesText.getText().toString().trim();
         String[] focusZonesArray = focusZones.split(",");
-        ArrayList<String> focusZonesList = new ArrayList<>(Arrays.asList(focusZonesArray));
-        String physicalLimitations = physicalLimitationsText.getText().toString();
+        ArrayList<String> focusZonesArrayList = new ArrayList<>(Arrays.asList(focusZonesArray));
+        String physicalLimitations = physicalLimitationsText.getText().toString().trim();
         String[] physicalLimitationsArray = physicalLimitations.split(",");
-        ArrayList<String> physicalLimitationsList = new ArrayList<>(Arrays.asList(physicalLimitationsArray));
-        String startingWeight = startingWeightText.getText().toString();
-        String targetWeight = targetWeightText.getText().toString();
-        String height = heightText.getText().toString();
-        String imageUri = prefs.getString("image", null);
+        ArrayList<String> physicalLimitationsArrayList = new ArrayList<>(Arrays.asList(physicalLimitationsArray));
+        String date = birthDateText.getText().toString().trim();
+        String startingWeight = startingWeightText.getText().toString().trim();
+        String targetWeight = targetWeightText.getText().toString().trim();
+        String height = heightText.getText().toString().trim();
+        String imageUri = sharedPreferences.getString("Image", null);
         if (imageUri != null) {
             Glide.with(this).load(Uri.parse(imageUri)).into(profileImage);
         }
 
-//        editor.putString("name", name);
-//        editor.putString("date", date);
-//        editor.putString("gender", gender);
-//        editor.putString("dietType", dietType);
-//        editor.putString("fitnessLevel", fitnessLevel);
-//        editor.putString("FocusZones", focusZones);
-//        editor.putString("physicalLimitations", physicalLimitations);
-//        editor.putString("starting_weight", startingWeight);
-//        editor.putString("target_weight", targetWeight);
-//        editor.putString("height", height);
-//
-//
-//        // add the selected image URI as a string to the shared preferences
-//        if (selectedImageUri != null) {
-//            editor.putString("image", selectedImageUri.toString());
-//        }
-//
-//        editor.apply();
-//
-//        Intent intent = new Intent();
-//        intent.putExtra("name", name);
-//        intent.putExtra("date", date);
-//        intent.putExtra("gender", gender);
-//        intent.putExtra("dietType", dietType);
-//        intent.putExtra("fitnessLevel", fitnessLevel);
-//        intent.putExtra("focusZones", focusZones);
-//        intent.putExtra("physicalLimitations", physicalLimitations);
-//        intent.putExtra("startingWeight", startingWeight);
-//        intent.putExtra("targetWeight", targetWeight);
-//        intent.putExtra("height", height);
+        editor.putString("name", name);
+        editor.putString("date", date);
+        editor.putString("gender", gender);
+        editor.putString("dietType", dietType);
+        editor.putString("fitnessLevel", fitnessLevel);
+        editor.putString("focusZones", focusZonesArrayList.toString());
+        editor.putString("physicalLimitations", physicalLimitationsArrayList.toString());
+        editor.putString("startingWeight", startingWeight);
+        editor.putString("targetWeight", targetWeight);
+        editor.putString("height", height);
+
+
+        // add the selected image URI as a string to the shared preferences
+        if (selectedImageUri != null) {
+            editor.putString("Image", selectedImageUri.toString());
+        }
+        editor.apply();
+
+        Intent intent = new Intent();
+        intent.putExtra("name", name);
+        intent.putExtra("date", date);
+        intent.putExtra("gender", gender);
+        intent.putExtra("dietType", dietType);
+        intent.putExtra("fitnessLevel", fitnessLevel);
+        intent.putExtra("focusZones", focusZonesArrayList.toString());
+        intent.putExtra("physicalLimitations", physicalLimitationsArrayList.toString());
+        intent.putExtra("startingWeight", startingWeight);
+        intent.putExtra("targetWeight", targetWeight);
+        intent.putExtra("height", height);
 
         if (selectedImageUri != null) {
             profileImage.setImageURI(selectedImageUri);
@@ -664,161 +660,57 @@ public class Edit_Profile extends AppCompatActivity {
             profileImage.setImageResource(R.drawable.ic_launcher_foreground);
         }
 
-        // Create the JSON request body
-        JSONObject profileData  = new JSONObject();
-        try {
-            profileData .put("name", name);
-            profileData .put("date", date);
-            profileData .put("gender", gender);
-            profileData .put("dietType", dietType);
-            profileData .put("fitnessLevel", fitnessLevel);
-            profileData .put("focusZones", focusZones);
-            profileData .put("focusZones", focusZonesList);
-            profileData .put("physicalLimitations", physicalLimitationsList);
-            profileData .put("startingWeight", startingWeight);
-            profileData .put("targetWeight", targetWeight);
-            profileData .put("height", height);
-
-
-            apiService.updateProfile(name, gender, dietType, fitnessLevel, focusZonesList, physicalLimitationsList, startingWeight, targetWeight, height, imageUri, new ApiService.DataSubmitCallback() {
-                @Override
-                public void onSuccess(ResponseModel response) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("name", name);
-                    bundle.putString("gender", gender);
-                    bundle.putString("dietType", dietType);
-                    bundle.putString("fitnessLevel", fitnessLevel);
-                    //bundle.putString("focusZones", focusZones);
-                    bundle.putStringArrayList("focusZones", focusZonesList);
-                    bundle.putStringArrayList("physicalLimitations", physicalLimitationsList);
-                    //bundle.putString("physicalLimitations", physicalLimitations);
-                    bundle.putString("startingWeight", startingWeight);
-                    bundle.putString("targetWeight", targetWeight);
-                    bundle.putString("height", height);
-                    bundle.putString("imageUri", imageUri);
-                    Intent intent = new Intent(Edit_Profile.this, ProfileActivity.class);
-                    startActivity(intent);
+        // Create a JsonObject to hold the questionnaire data
+        JsonObject questionnaireData = new JsonObject();
+        apiService.submitQuestionnaire(apiEmail, questionnaireData, new ApiService.DataSubmitCallback() {
+            @Override
+            public void onSuccess(ResponseModel response) {
+                int responseCode = response.getResponseCode();
+                if (responseCode == 200) {
+                    // Questionnaire submitted successfully
+                    sharedPreferences.getString("name", name);
+                    questionnaireData.addProperty("name", name);
+                    sharedPreferences.getString("gender", gender);
+                    questionnaireData.addProperty("gender", gender);
+                    sharedPreferences.getString("dietType", dietType);
+                    questionnaireData.addProperty("dietType", dietType);
+                    sharedPreferences.getString("fitnessLevel", fitnessLevel);
+                    questionnaireData.addProperty("fitnessLevel", fitnessLevel);
+                    sharedPreferences.getString("focusZones", focusZonesArrayList.toString());
+                    questionnaireData.add("focusZones", new Gson().toJsonTree(focusZonesArrayList));
+                    sharedPreferences.getString("date", date);
+                    questionnaireData.addProperty("date", date);
+                    sharedPreferences.getString("physicalLimitations", physicalLimitationsArrayList.toString());
+                    questionnaireData.add("physicalLimitation", new Gson().toJsonTree(physicalLimitationsArrayList));
+                    sharedPreferences.getString("startingWeight", startingWeight);
+                    questionnaireData.addProperty("startingWeight", startingWeight);
+                    sharedPreferences.getString("targetWeight", targetWeight);
+                    questionnaireData.addProperty("targetWeight", targetWeight);
+                    sharedPreferences.getString("height", height);
+                    questionnaireData.addProperty("height", height);
+                    sharedPreferences.getString("Image", imageUri);
+                    questionnaireData.addProperty("Image", imageUri);
                 }
+            }
+            @Override
+            public void onError(String errorMessage) { }
 
-                @Override
-                public void onError(String errorMessage) {
-                    Toast.makeText(Edit_Profile.this, errorMessage, Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                    if (response.isSuccessful()) {
-                        ResponseModel data = response.body();
-                        onSuccess(data);
-                    } else {
-                        String errorMessage = "Error: " + response.code();
-                        onError(errorMessage);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseModel> call, Throwable throwable) {
-                    String errorMessage = "Request failed: " + throwable.getMessage();
+            @Override
+            public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                if (response.isSuccessful()) {
+                    ResponseModel data = response.body();
+                    onSuccess(data);
+                } else {
+                    String errorMessage = "Error: " + response.code();
                     onError(errorMessage);
                 }
+            }
 
-            });
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
+            @Override
+            public void onFailure(Call<ResponseModel> call, Throwable throwable) {
+                String errorMessage = "Request failed: " + throwable.getMessage();
+                onError(errorMessage);
+            }
+        });
     }
-
-        // Create an instance of HttpPostTask and execute it
-//        SharedPreferences sharedPreferences = Edit_Profile.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
-//        String email = sharedPreferences.getString("email", "");
-//        String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-//        HttpPostTask task = new HttpPostTask(url, requestBody.toString(), new HttpPostTask.OnHttpPostTaskCompleted() {
-//            @Override
-//            public void onHttpPostTaskCompleted(String response) {
-//                // Process the response as needed
-//                // ...
-//                System.out.println("Response: " + response);
-//            }
-//        });
-//        task.execute();
-//
-//        setResult(HttpURLConnection.HTTP_OK, intent);
-//        finish();
-//    }
-
-//    public static class HttpPostTask extends AsyncTask<String, Void, String> {
-//        private final String url;
-//        private final String requestBody;
-//        private final OnHttpPostTaskCompleted listener;
-//
-//        public HttpPostTask(String url, String requestBody, OnHttpPostTaskCompleted listener) {
-//            this.url = url;
-//            this.requestBody = requestBody;
-//            this.listener = listener;
-//        }
-//
-//        @Override
-//        protected String doInBackground(String... params) {
-//            HttpURLConnection urlConnection = null;
-//            BufferedReader reader = null;
-//            try {
-//                // Create the connection
-//                URL url = new URL(this.url);
-//                urlConnection = (HttpURLConnection) url.openConnection();
-//                urlConnection.setRequestMethod("POST");
-//                urlConnection.setDoOutput(true);
-//
-//                // Set the request body
-//                OutputStream outputStream = urlConnection.getOutputStream();
-//                outputStream.write(requestBody.getBytes());
-//                outputStream.flush();
-//                outputStream.close();
-//
-//                // Read the response
-//                int responseCode = urlConnection.getResponseCode();
-//                if (responseCode == HttpURLConnection.HTTP_OK) {
-//                    StringBuilder response = new StringBuilder();
-//                    reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-//                    String line;
-//                    while ((line = reader.readLine()) != null) {
-//                        response.append(line);
-//                    }
-//
-//                    return response.toString();
-//                }
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                if (urlConnection != null) {
-//                    urlConnection.disconnect();
-//                }
-//                if (reader != null) {
-//                    try {
-//                        reader.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String response) {
-//            super.onPostExecute(response);
-//            if (listener != null) {
-//                listener.onHttpPostTaskCompleted(response);
-//            }
-//        }
-//
-//        public interface OnHttpPostTaskCompleted {
-//            void onHttpPostTaskCompleted(String response);
-//        }
-//
-//    }
-//
-
 }

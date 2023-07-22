@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.app.progresviews.ProgressWheel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -29,18 +30,21 @@ import java.net.URL;
 public class Water_Tracker extends AppCompatActivity {
     TextView personal_plan, food, challenges, user_profile;
     FloatingActionButton exe;
-
     private ProgressWheel progressWheel;
     private TextView mlTargetText, ml_message_TextView;
     private Button drinkWaterButton;
     private int totalMl = 0;
 
+    String apiEmail = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_water_tracker);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Water_Tracker.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
+        apiEmail = email.replaceFirst("@","__");
 
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
@@ -52,12 +56,6 @@ public class Water_Tracker extends AppCompatActivity {
         mlTargetText = findViewById(R.id.mlTargetText);
         ml_message_TextView = findViewById(R.id.ml_message_TextView);
         drinkWaterButton = findViewById(R.id.drinkWaterButton);
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        int savedTotalMl = sharedPreferences.getInt("totalMl", 0);
-        totalMl = savedTotalMl;
-        progressWheel.setPercentage(percentage(String.valueOf(totalMl)));
-        progressWheel.setStepCountText(String.valueOf(totalMl));
 
         personal_plan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +89,14 @@ public class Water_Tracker extends AppCompatActivity {
             }
         });
 
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(Water_Tracker.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
         ml_message_TextView.setVisibility(View.GONE);
         drinkWaterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,6 +113,7 @@ public class Water_Tracker extends AppCompatActivity {
                 progressWheel.setPercentage(percentage(String.valueOf(totalMl)));
                 progressWheel.setStepCountText(String.valueOf(totalMl));
 
+                SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt("totalMl", totalMl).apply();
 
                 // Create an instance of the HttpPostTask and execute it
@@ -129,15 +136,10 @@ public class Water_Tracker extends AppCompatActivity {
         return intPercentage;
     }
 
-    SharedPreferences sharedPreferences = Water_Tracker.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
-    String email = sharedPreferences.getString("email", "");
-    String apiEmail = email.replaceFirst("@","__");
-
     private class HttpPostTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
-            // Perform the HTTP POST request here
             String urlStr = "http://10.0.2.2:8181/water/" + apiEmail;
             try {
                 URL url = new URL(urlStr);
@@ -184,10 +186,25 @@ public class Water_Tracker extends AppCompatActivity {
         protected void onPostExecute(String result) {
             if (result != null) {
                 // Handle the response from the server
-                Toast.makeText(Water_Tracker.this, "POST Response: " + result, Toast.LENGTH_SHORT).show();
+                try {
+                    JSONObject responseJson = new JSONObject(result);
+                    int updatedTotalMl = responseJson.optInt("totalMl", totalMl);
+
+                    // Update the variables with the new values
+                    totalMl = updatedTotalMl;
+                    progressWheel.setPercentage(percentage(String.valueOf(totalMl)));
+                    progressWheel.setStepCountText(String.valueOf(totalMl));
+
+                    // ...remaining code...
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    // Error handling for invalid response
+                   // Toast.makeText(Water_Tracker.this, "Invalid response from server", Toast.LENGTH_SHORT).show();
+                }
+//                Toast.makeText(Water_Tracker.this, "POST Response: " + result, Toast.LENGTH_SHORT).show();
             } else {
                 // Error handling for unsuccessful response
-                Toast.makeText(Water_Tracker.this, "POST request failed", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(Water_Tracker.this, "POST request failed", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -195,10 +212,8 @@ public class Water_Tracker extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Void... params) {
-            // Perform the HTTP GET request here
-            String urlStr = "http://10.0.2.2:8181/water/" + apiEmail +
-                    "target=" + (int) Integer.parseInt(mlTargetText.getText().toString().replaceAll("[^\\d]", "")) +
-                    "percentage=" + percentage(String.valueOf(totalMl));
+            // Perform the HTTP GET request
+            String urlStr = "http://10.0.2.2:8181/water/" + apiEmail;
 
             try {
                 URL url = new URL(urlStr);
@@ -234,10 +249,24 @@ public class Water_Tracker extends AppCompatActivity {
         protected void onPostExecute(String result) {
             if (result != null) {
                 // Handle the response from the server
-                Toast.makeText(Water_Tracker.this, "GET Response: " + result, Toast.LENGTH_SHORT).show();
+                try {
+                    JSONObject responseJson = new JSONObject(result);
+                    int updatedTotalMl = responseJson.optInt("totalMl", totalMl);
+
+                    // Update the variables with the new values
+                    totalMl = updatedTotalMl;
+                    progressWheel.setPercentage(percentage(String.valueOf(totalMl)));
+                    progressWheel.setStepCountText(String.valueOf(totalMl));
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    // Error handling for invalid response
+                    //Toast.makeText(Water_Tracker.this, "Invalid response from server", Toast.LENGTH_SHORT).show();
+                }
+//                Toast.makeText(Water_Tracker.this, "GET Response: " + result, Toast.LENGTH_SHORT).show();
             } else {
                 // Error handling for unsuccessful response
-                Toast.makeText(Water_Tracker.this, "GET request failed", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(Water_Tracker.this, "GET request failed", Toast.LENGTH_SHORT).show();
             }
         }
     }

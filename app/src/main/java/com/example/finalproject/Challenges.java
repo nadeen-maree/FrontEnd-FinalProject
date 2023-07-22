@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,14 +32,16 @@ public class Challenges extends AppCompatActivity {
     ConstraintLayout challenge1, challenge2, challenge3, challenge4, challenge5;
     TextView challengeName1, challengeName2, challengeName3, challengeName4, challengeName5;
 
-    SharedPreferences sharedPreferences = Challenges.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
-    String email = sharedPreferences.getString("email", "");
-    String apiEmail = email.replaceFirst("@","__");
+    String apiEmail = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_challenges);
+
+        SharedPreferences sharedPreferences = Challenges.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
+        apiEmail = email.replaceFirst("@","__");
 
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
@@ -57,8 +58,6 @@ public class Challenges extends AppCompatActivity {
         challengeName3 = findViewById(R.id.challenge3_name);
         challengeName4 = findViewById(R.id.challenge4_name);
         challengeName5 = findViewById(R.id.challenge5_name);
-
-
 
         personal_plan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,62 +91,54 @@ public class Challenges extends AppCompatActivity {
             }
         });
 
+        user_profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent= new Intent(Challenges.this, ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
+
         challenge1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int constraintLayoutId = R.id.challenge1_constraint_layout;
-                Intent intent = new Intent(Challenges.this, Specific_Challenge.class);
-                intent.putExtra("constraintLayoutId", constraintLayoutId);
-                startActivity(intent);
+                String challengeName = challengeName1.getText().toString();
+                startSpecificChallengeActivity(challengeName);
             }
         });
 
         challenge2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int constraintLayoutId = R.id.challenge2_constraint_layout;
-                Intent intent = new Intent(Challenges.this, Specific_Challenge.class);
-                intent.putExtra("constraintLayoutId", constraintLayoutId);
-                startActivity(intent);
+                String challengeName = challengeName2.getText().toString();
+                startSpecificChallengeActivity(challengeName);
             }
         });
         challenge3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int constraintLayoutId = R.id.challenge3_constraint_layout;
-                Intent intent = new Intent(Challenges.this, Specific_Challenge.class);
-                intent.putExtra("constraintLayoutId", constraintLayoutId);
-                startActivity(intent);
+                String challengeName = challengeName3.getText().toString();
+                startSpecificChallengeActivity(challengeName);
             }
         });
-
         challenge4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int constraintLayoutId = R.id.challenge4_constraint_layout;
-                Intent intent = new Intent(Challenges.this, Specific_Challenge.class);
-                intent.putExtra("constraintLayoutId", constraintLayoutId);
-                startActivity(intent);
+                String challengeName = challengeName4.getText().toString();
+                startSpecificChallengeActivity(challengeName);
             }
         });
-
         challenge5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int constraintLayoutId = R.id.challenge5_constraint_layout;
-                Intent intent = new Intent(Challenges.this, Specific_Challenge.class);
-                intent.putExtra("constraintLayoutId", constraintLayoutId);
-                startActivity(intent);
+                String challengeName = challengeName5.getText().toString();
+                startSpecificChallengeActivity(challengeName);
             }
         });
-
         new FetchChallengesTask().execute();
-
     }
 
     private class FetchChallengesTask extends AsyncTask<String, Void, JSONArray> {
-
-
         @Override
         protected JSONArray doInBackground(String... params) {
             String apiUrl = "http://10.0.2.2:8181/challenge/" + apiEmail;
@@ -172,7 +163,6 @@ public class Challenges extends AppCompatActivity {
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
-
             return null;
         }
 
@@ -210,5 +200,10 @@ public class Challenges extends AppCompatActivity {
                 challengeName5.setText(challengeName);
                 break;
         }
+    }
+    private void startSpecificChallengeActivity(String challengeName) {
+        Intent intent = new Intent(Challenges.this, Specific_Challenge.class);
+        intent.putExtra("challengeName", challengeName);
+        startActivity(intent);
     }
 }

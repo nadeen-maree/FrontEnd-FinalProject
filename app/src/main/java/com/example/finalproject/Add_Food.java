@@ -1,27 +1,20 @@
 package com.example.finalproject;
 
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.app.progresviews.ProgressWheel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,19 +26,23 @@ public class Add_Food extends AppCompatActivity {
 
     TextView personal_plan, food, challenges, user_profile;
     FloatingActionButton exe;
-
     TextView targetText, caloriesMessageTextView;
     EditText breakfastEditText, lunchEditText, dinnerEditText, snackEditText;
     ProgressWheel progressWheel;
-
+    Button save;
     int totalCalories = 0;
+    int targetCalories = 0;
+    private String apiEmail = "";
+    String breakfast = "", lunch = "", dinner = "", snack = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Add_Food.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        String email = sharedPreferences.getString("email", "");
+        apiEmail = email.replaceFirst("@","__");
 
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
@@ -53,6 +50,7 @@ public class Add_Food extends AppCompatActivity {
         user_profile = findViewById(R.id.tab5_txt);
         exe = findViewById(R.id.training_btn);
 
+        save = findViewById(R.id.save);
         targetText = findViewById(R.id.targetText);
         breakfastEditText = findViewById(R.id.breakfast);
         lunchEditText = findViewById(R.id.lunch);
@@ -62,20 +60,6 @@ public class Add_Food extends AppCompatActivity {
         caloriesMessageTextView = findViewById(R.id.calories_message_TextView);
         caloriesMessageTextView.setVisibility(View.GONE);
 
-        int targetCalories = Integer.parseInt(targetText.getText().toString().replaceAll("[^\\d]", ""));
-        int maxLength = String.valueOf(targetCalories).length(); // get length of targetCalories as max length
-        InputFilter[] filterArray = new InputFilter[1];
-        filterArray[0] = new InputFilter.LengthFilter(maxLength);
-        breakfastEditText.setFilters(filterArray);
-        lunchEditText.setFilters(filterArray);
-        dinnerEditText.setFilters(filterArray);
-        snackEditText.setFilters(filterArray);
-
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        int savedTotalCalories = sharedPreferences.getInt("totalCalories", 0);
-        totalCalories = savedTotalCalories;
-        progressWheel.setPercentage(percentage(String.valueOf(totalCalories)));
-        progressWheel.setStepCountText(String.valueOf(totalCalories));
 
         personal_plan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,90 +93,107 @@ public class Add_Food extends AppCompatActivity {
             }
         });
 
-        // Define the TextWatcher
-        TextWatcher mealCaloriesTextWatcher = new TextWatcher() {
+        user_profile.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Do nothing
+            public void onClick(View view) {
+                Intent intent = new Intent(Add_Food.this, ProfileActivity.class);
+                startActivity(intent);
             }
+        });
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // Update the totalCalories and progressWheel
-                updateTotalCaloriesAndProgressWheel();
-            }
+        String targetCaloriesText = targetText.getText().toString().replaceAll("[^\\d]", "");
+        if (!targetCaloriesText.isEmpty()) {
+            targetCalories = Integer.parseInt(targetCaloriesText);
+        } else {
+            targetCalories = 0; // Set a default value
+            // Show an error message to the user
+            Toast.makeText(this, "Invalid target calories", Toast.LENGTH_SHORT).show();
+        }
+        int maxLength = String.valueOf(targetCalories).length();
+        InputFilter[] filterArray = new InputFilter[1];
+        filterArray[0] = new InputFilter.LengthFilter(maxLength);
+        breakfastEditText.setFilters(filterArray);
+        lunchEditText.setFilters(filterArray);
+        dinnerEditText.setFilters(filterArray);
+        snackEditText.setFilters(filterArray);
 
-            // Define the method to update the totalCalories and progressWheel
-            private void updateTotalCaloriesAndProgressWheel() {
-                int breakfastCalories = 0;
-                int lunchCalories = 0;
-                int dinnerCalories = 0;
-                int snackCalories = 0;
-
-                // Parse the EditText fields to integers
-                if (!breakfastEditText.getText().toString().isEmpty()) {
-                    breakfastCalories = Integer.parseInt(breakfastEditText.getText().toString());
-                }
-                if (!lunchEditText.getText().toString().isEmpty()) {
-                    lunchCalories = Integer.parseInt(lunchEditText.getText().toString());
-                }
-                if (!dinnerEditText.getText().toString().isEmpty()) {
-                    dinnerCalories = Integer.parseInt(dinnerEditText.getText().toString());
-                }
-                if (!snackEditText.getText().toString().isEmpty()) {
-                    snackCalories = Integer.parseInt(snackEditText.getText().toString());
-                }
-
-                // Calculate the totalCalories and update the progressWheel
-                totalCalories = breakfastCalories + lunchCalories + dinnerCalories + snackCalories;
-                if (totalCalories > targetCalories) {
-                    String message = "You have exceeded the recommended calories";
-                    caloriesMessageTextView.setText(message);
-                    caloriesMessageTextView.setVisibility(View.VISIBLE);
-                } else {
-                    caloriesMessageTextView.setVisibility(View.GONE);
-                }
-                progressWheel.setPercentage(percentage(String.valueOf(totalCalories)));
-                progressWheel.setStepCountText(String.valueOf(totalCalories));
-
-                // Save the updated values to SharedPreferences
-                editor.putString("breakfast", breakfastEditText.getText().toString()).apply();
-                editor.putString("lunch", lunchEditText.getText().toString()).apply();
-                editor.putString("dinner", dinnerEditText.getText().toString()).apply();
-                editor.putString("snack", snackEditText.getText().toString()).apply();
-                editor.putInt("totalCalories", totalCalories).apply();
-
-                // Create an instance of the HttpPostTask and execute it
-                HttpPostTask httpPostTask = new HttpPostTask();
-                httpPostTask.execute();
-
-                // Create an instance of the HttpGetTask and execute it
-                HttpGetTask httpGetTask = new HttpGetTask();
-                httpGetTask.execute();
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // Do nothing
-            }
-        };
-
-// Register the TextWatcher on the EditText fields
-        breakfastEditText.addTextChangedListener(mealCaloriesTextWatcher);
-        lunchEditText.addTextChangedListener(mealCaloriesTextWatcher);
-        dinnerEditText.addTextChangedListener(mealCaloriesTextWatcher);
-        snackEditText.addTextChangedListener(mealCaloriesTextWatcher);
+        int savedTotalCalories = sharedPreferences.getInt("totalCalories", 0);
+        totalCalories = savedTotalCalories;
+        progressWheel.setPercentage(percentage(String.valueOf(totalCalories)));
+        progressWheel.setStepCountText(String.valueOf(totalCalories));
 
         String savedBreakfast = sharedPreferences.getString("breakfast", "");
         String savedLunch = sharedPreferences.getString("lunch", "");
         String savedDinner = sharedPreferences.getString("dinner", "");
         String savedSnack = sharedPreferences.getString("snack", "");
+        breakfast = savedBreakfast;
+        lunch = savedLunch;
+        dinner = savedDinner;
+        snack = savedSnack;
+        breakfastEditText.setText(breakfast);
+        lunchEditText.setText(lunch);
+        dinnerEditText.setText(dinner);
+        snackEditText.setText(snack);
 
-        // Set the text of the EditTexts to the saved data
-        breakfastEditText.setText(savedBreakfast);
-        lunchEditText.setText(savedLunch);
-        dinnerEditText.setText(savedDinner);
-        snackEditText.setText(savedSnack);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                        int breakfastCalories = 0;
+                        int lunchCalories = 0;
+                        int dinnerCalories = 0;
+                        int snackCalories = 0;
+
+
+                        if (!breakfastEditText.getText().toString().isEmpty()) {
+                            breakfastCalories = Integer.parseInt(breakfastEditText.getText().toString());
+                        }
+                        if (!lunchEditText.getText().toString().isEmpty()) {
+                            lunchCalories = Integer.parseInt(lunchEditText.getText().toString());
+                        }
+                        if (!dinnerEditText.getText().toString().isEmpty()) {
+                            dinnerCalories = Integer.parseInt(dinnerEditText.getText().toString());
+                        }
+                        if (!snackEditText.getText().toString().isEmpty()) {
+                            snackCalories = Integer.parseInt(snackEditText.getText().toString());
+                        }
+
+                        totalCalories = breakfastCalories + lunchCalories + dinnerCalories + snackCalories;
+                        if (totalCalories > targetCalories) {
+                            String message = "You have exceeded the recommended calories";
+                            caloriesMessageTextView.setText(message);
+                            caloriesMessageTextView.setVisibility(View.VISIBLE);
+                        } else {
+                            caloriesMessageTextView.setVisibility(View.GONE);
+                        }
+
+                        breakfastEditText.setText(String.valueOf(breakfastCalories));
+                        lunchEditText.setText(String.valueOf(lunchCalories));
+                        dinnerEditText.setText(String.valueOf(dinnerCalories));
+                        snackEditText.setText(String.valueOf(snackCalories));
+
+                        breakfast = breakfastEditText.getText().toString();
+                        lunch = lunchEditText.getText().toString();
+                        dinner = dinnerEditText.getText().toString();
+                        snack = snackEditText.getText().toString();
+
+                        progressWheel.setPercentage(percentage(String.valueOf(totalCalories)));
+                        progressWheel.setStepCountText(String.valueOf(totalCalories));
+
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("breakfast", breakfast);
+                        editor.putString("lunch", lunch);
+                        editor.putString("dinner", dinner);
+                        editor.putString("snack", snack);
+                        editor.putInt("totalCalories", totalCalories);
+                        editor.apply();
+
+                Add_Food.HttpPostTask httpPostTask = new HttpPostTask();
+                httpPostTask.execute();
+
+                HttpGetTask httpGetTask = new HttpGetTask();
+                httpGetTask.execute();
+            }
+        });
     }
 
     public int percentage(String calorie) {
@@ -205,16 +206,11 @@ public class Add_Food extends AppCompatActivity {
         return intPercentage;
     }
 
-    SharedPreferences sharedPreferences = Add_Food.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
-    String email = sharedPreferences.getString("email", "");
-    String apiEmail = email.replaceFirst("@","__");
-
     private class HttpPostTask extends AsyncTask<Void, Void, String> {
 
         @Override
         protected String doInBackground(Void... params) {
-            // Perform the HTTP POST request here
-            String urlStr = "http://10.0.2.2:8181/addfood/" + apiEmail;
+            String urlStr = "http://10.0.2.2:8181/food/" + apiEmail;
             try {
                 URL url = new URL(urlStr);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -222,12 +218,11 @@ public class Add_Food extends AppCompatActivity {
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setDoOutput(true);
 
-                // Create the JSON request body
                 JSONObject requestBody = new JSONObject();
-                requestBody.put("breakfast", breakfastEditText.getText().toString());
-                requestBody.put("lunch", lunchEditText.getText().toString());
-                requestBody.put("dinner", dinnerEditText.getText().toString());
-                requestBody.put("snack", snackEditText.getText().toString());
+                requestBody.put("breakfast", breakfast);
+                requestBody.put("lunch", lunch);
+                requestBody.put("dinner", dinner);
+                requestBody.put("snack", snack);
 
                 // Write the JSON request body to the request stream
                 OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
@@ -262,65 +257,57 @@ public class Add_Food extends AppCompatActivity {
         protected void onPostExecute(String result) {
             if (result != null) {
                 // Handle the response from the server
-                Toast.makeText(Add_Food.this, "POST Response: " + result, Toast.LENGTH_SHORT).show();
             } else {
                 // Error handling for unsuccessful response
                 Toast.makeText(Add_Food.this, "POST request failed", Toast.LENGTH_SHORT).show();
             }
         }
     }
+
     private class HttpGetTask extends AsyncTask<Void, Void, String> {
 
         @Override
-            protected String doInBackground(Void... params) {
-                // Perform the HTTP GET request here
-                String urlStr = "http://10.0.2.2:8181/addfood/" + apiEmail +
-                        "target=" + (int) Integer.parseInt(targetText.getText().toString().replaceAll("[^\\d]", "")) +
-                        "percentage=" + percentage(String.valueOf(totalCalories)) +
-                        "breakfast=" + breakfastEditText.getText().toString() +
-                        "lunch=" + lunchEditText.getText().toString() +
-                        "dinner=" + dinnerEditText.getText().toString() +
-                        "snack=" + snackEditText.getText().toString();
+        protected String doInBackground(Void... params) {
+            String urlStr = "http://10.0.2.2:8181/food/" + apiEmail;
 
-                try {
-                    URL url = new URL(urlStr);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("GET");
-                    conn.setRequestProperty("Content-Type", "application/json");
+            try {
+                URL url = new URL(urlStr);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Content-Type", "application/json");
 
-                    // Read the response from the server
-                    int responseCode = conn.getResponseCode();
-                    if (responseCode == HttpURLConnection.HTTP_OK) {
-                        // Successful response
-                        InputStream inputStream = conn.getInputStream();
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                        StringBuilder response = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            response.append(line);
-                        }
-                        reader.close();
-                        // Return the response as a string
-                        return response.toString();
-                    } else {
-                        Toast.makeText(Add_Food.this, "Unknown internal failure", Toast.LENGTH_SHORT).show();
-                        return null;
+                // Read the response from the server
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    // Successful response
+                    InputStream inputStream = conn.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    reader.close();
+                    // Return the response as a string
+                    return response.toString();
+
+                } else {
+                    Toast.makeText(Add_Food.this, "Unknown internal failure", Toast.LENGTH_SHORT).show();
                     return null;
                 }
-            }
-
-            @Override
-            protected void onPostExecute(String result) {
-                if (result != null) {
-                    // Handle the response from the server
-                    Toast.makeText(Add_Food.this, "GET Response: " + result, Toast.LENGTH_SHORT).show();
-                } else {
-                    // Error handling for unsuccessful response
-                    Toast.makeText(Add_Food.this, "GET request failed", Toast.LENGTH_SHORT).show();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
             }
         }
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                // Handle the response from the server
+            } else {
+                // Error handling for unsuccessful response
+                Toast.makeText(Add_Food.this, "GET request failed", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 }
