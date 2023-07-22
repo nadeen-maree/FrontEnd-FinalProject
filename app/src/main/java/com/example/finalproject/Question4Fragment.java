@@ -14,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonObject;
 
 public class Question4Fragment extends Fragment {
     private RadioGroup dietTypeRadioGroup;
@@ -22,6 +23,11 @@ public class Question4Fragment extends Fragment {
     private Context context;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+
+    static String finalDietType = "";
+
+    private SharedPreferences sharedPreferences;
+    private String email;
 
     public Question4Fragment() {
         // Required empty public constructor
@@ -41,6 +47,17 @@ public class Question4Fragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question4, container, false);
 
+<<<<<<< HEAD
+=======
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@", "__");
+
+        context = getContext();
+        apiService = ApiService.getInstance(context);
+
+>>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
         dietTypeRadioGroup = view.findViewById(R.id.diet_type__radio_group);
         traditionalRadioButton = view.findViewById(R.id.traditional_radio_button);
         vegetarianRadioButton = view.findViewById(R.id.vegetarian_radio_button);
@@ -64,6 +81,25 @@ public class Question4Fragment extends Fragment {
                     Toast.makeText(getContext(), "Please select a diet type", Toast.LENGTH_SHORT).show();
                     return;
                 }
+<<<<<<< HEAD
+=======
+                finalDietType = dietType;
+
+                JsonObject requestBody = new JsonObject();
+                requestBody.addProperty("dietType", finalDietType);
+                apiService.submitQuestionnaire(apiEmail,requestBody, new ApiService.DataSubmitCallback() {
+                    @Override
+                    public void onSuccess(ResponseModel response) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("dietType", finalDietType);
+                        Question5Fragment question5Fragment = new Question5Fragment();
+                        question5Fragment.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, question5Fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+>>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
 
                 // Save the diet type to shared preferences
                 editor.putString("dietType", dietType).apply();
@@ -78,8 +114,79 @@ public class Question4Fragment extends Fragment {
         return view;
     }
 
+<<<<<<< HEAD
     public String getDietType() {
         // Retrieve the diet type from shared preferences
         return sharedPreferences.getString("dietType", "");
     }
+=======
+    public static String getDietType(){
+        return finalDietType;
+    }
+//    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//
+//        private String dietType;
+//        String response = "";
+//        @Override
+//        protected String doInBackground(String... params) {
+//            dietType = params[0];
+//            String urlStr = "http://example.com/api/dietType";
+//            String postData = "dietType=" + dietType;
+//
+//            try {
+//                URL url = new URL(urlStr);
+//                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                conn.setRequestMethod("POST");
+//                conn.setDoOutput(true);
+//                conn.setDoInput(true);
+//                conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+//                conn.setRequestProperty("Content-Length", Integer.toString(postData.length()));
+//
+//                // Write POST data to request body
+//                DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+//                os.writeBytes(postData);
+//                os.flush();
+//                os.close();
+//
+//                // Read response from server
+//                int responseCode = conn.getResponseCode();
+//                if (responseCode == HttpURLConnection.HTTP_OK) {
+//                    InputStream inputStream = conn.getInputStream();
+//                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+//                    String line;
+//                    while ((line = bufferedReader.readLine()) != null) {
+//                        response += line;
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return response;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String result) {
+//            if (result != null) {
+//                try {
+//                    JSONObject json = new JSONObject(result);
+//
+//                    // Handle response from server
+//                    // ...
+//
+//                    // Navigate to next question
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("dietType", dietType);
+//                    Question5Fragment question5Fragment = new Question5Fragment();
+//                    question5Fragment.setArguments(bundle);
+//                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                    transaction.replace(R.id.fragment_container, question5Fragment);
+//                    transaction.addToBackStack(null);
+//                    transaction.commit();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
+>>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
 }

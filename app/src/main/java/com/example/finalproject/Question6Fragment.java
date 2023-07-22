@@ -16,6 +16,17 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+<<<<<<< HEAD
+=======
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+>>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
 import java.util.ArrayList;
 
 public class Question6Fragment extends Fragment {
@@ -25,6 +36,11 @@ public class Question6Fragment extends Fragment {
     ArrayList<String> selectedFocusZones;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+
+    static ArrayList<String> selectedFocusZones;
+
+    private SharedPreferences sharedPreferences;
+    private String email;
 
     public Question6Fragment() {
         // Required empty public constructor
@@ -43,6 +59,15 @@ public class Question6Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_question6, container, false);
+<<<<<<< HEAD
+=======
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
+        email = sharedPreferences.getString("email", "");
+        String apiEmail = email.replaceFirst("@", "__");
+
+        context = getContext();
+        apiService = ApiService.getInstance(context);
+>>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
 
         chestCheckbox = view.findViewById(R.id.chest_checkbox);
         backCheckbox = view.findViewById(R.id.back_checkbox);
@@ -87,13 +112,42 @@ public class Question6Fragment extends Fragment {
                 if (absChecked) {
                     selectedFocusZones.add(absCheckbox.getText().toString());
                 }
+                JsonObject requestBody = new JsonObject();
+                JsonArray focusZonesArray = new JsonArray();
 
+                for (String focusZone : selectedFocusZones) {
+                    focusZonesArray.add(focusZone);
+                }
+
+<<<<<<< HEAD
                 // Save the selected focus zones to shared preferences
                 String focusZonesString = TextUtils.join(",", selectedFocusZones);
                 editor.putString("focusZones", focusZonesString).apply();
 
                 JsonObject requestBody = new JsonObject();
                 JsonArray focusZonesArray = new JsonArray();
+=======
+                requestBody.add("focusZones", focusZonesArray);
+
+
+                apiService.submitQuestionnaire(apiEmail,requestBody, new ApiService.DataSubmitCallback() {
+                    @Override
+                    public void onSuccess(ResponseModel response) {
+                        Bundle bundle = new Bundle();
+                        bundle.putStringArrayList("selectedFocusZones", selectedFocusZones);
+                        Question7Fragment question7Fragment = new Question7Fragment();
+                        question7Fragment.setArguments(bundle);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.fragment_container, question7Fragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+
+                    @Override
+                    public void onError(String errorMessage) {
+                        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+>>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
 
                 for (String focusZones : selectedFocusZones) {
                     focusZonesArray.add(focusZones);
@@ -109,8 +163,77 @@ public class Question6Fragment extends Fragment {
         return view;
     }
 
+<<<<<<< HEAD
     public String getFocusZones() {
         // Retrieve the selected focus zones from shared preferences
         return sharedPreferences.getString("focusZones", "");
     }
 }
+=======
+    public static ArrayList getFocusZones(){
+        return selectedFocusZones;
+    }
+
+//    private class HttpPostTask extends AsyncTask<String, Void, String> {
+//        @Override
+//        protected String doInBackground(String... params) {
+//            String url = params[0];
+//            String selectedFocusZonesString = params[1];
+//
+//            try {
+//                URL obj = new URL(url);
+//                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+//
+//                // Set the request method and headers
+//                con.setRequestMethod("POST");
+//                con.setRequestProperty("Content-Type", "application/json");
+//
+//                // Create the request body
+//                JSONObject requestBody = new JSONObject();
+//                requestBody.put("selectedFocusZones", selectedFocusZonesString);
+//
+//                // Convert the request body to a byte array and set it as the request entity
+//                byte[] requestBodyBytes = requestBody.toString().getBytes("UTF-8");
+//                con.setDoOutput(true);
+//                con.setFixedLengthStreamingMode(requestBodyBytes.length);
+//                OutputStream outputStream = con.getOutputStream();
+//                outputStream.write(requestBodyBytes);
+//                outputStream.flush();
+//                outputStream.close();
+//
+//                // Read the response from the server
+//                int responseCode = con.getResponseCode();
+//                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+//                String inputLine;
+//                StringBuilder response = new StringBuilder();
+//                while ((inputLine = in.readLine()) != null) {
+//                    response.append(inputLine);
+//                }
+//                in.close();
+//
+//                // Return the response from the server
+//                return response.toString();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String response) {
+//            super.onPostExecute(response);
+//
+//            if (response != null) {
+//                // Handle the response from the server
+//                Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
+//            } else {
+//                // Handle the error
+//                Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//
+//
+//    }
+}
+>>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
