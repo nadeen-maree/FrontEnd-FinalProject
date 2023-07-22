@@ -1,5 +1,10 @@
 # Health Fitness Android App 🏋️‍♂️🍏
 
+<p align="center">
+ <img width="90" alt="Icon-60@3x" src="/Users/nadeen.maree/Downloads/FinalProject 2/app/build/intermediates/packaged_res/debug/drawable-v24/ logo_circle_green.png">
+ 
+</p>
+
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
