@@ -41,7 +41,7 @@ To install the app, follow these steps:
 
 1. Clone the repository to your local machine using `git clone`.
 2. Open the project in Android Studio.
-3. Connect this repository with the backend repository by following the instructions there[backend repository](https://github.com/AstarKeret/final-project-backend)
+3. Connect this repository with the backend repository by following the instructions there [backend repository](https://github.com/AstarKeret/final-project-backend)
 4. Build and run the app on your Android device or emulator.
 
 ## Screenshots
@@ -93,7 +93,7 @@ Walk Tracker Screen
 
 ## Feedback and Support
 
-If you encounter any issues, have suggestions for improvement, or want to contribute to the project, please [open an issue](https://github.com/nadeen-maree/health-fitness-android-app/issues) or [create a pull request](https://github.com/nadeen-maree/health-fitness-android-app/pulls). We welcome any feedback or contributions to make this app even better!
+If you encounter any issues, have suggestions for improvement, or want to contribute to the project, please contact me in nadeen.maree1610@gmail.com. I welcome any feedback or contributions to make this app even better!
 
 ## License
 
