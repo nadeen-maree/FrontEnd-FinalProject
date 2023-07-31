@@ -89,7 +89,7 @@ Profile Screen and Edit Profile Screen
 
 Walk Tracker Screen
 
-<img width="200" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture3.png">
+<img width="200" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture11.png">
 
 ## Feedback and Support
 
