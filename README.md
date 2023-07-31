@@ -1,11 +1,10 @@
 # Health Fitness Android App 🏋️‍♂️🍏
 
 <p align="center">
- <img width="90" alt="Icon-60@3x" src="/Users/nadeen.maree/Downloads/FinalProject 2/app/build/intermediates/packaged_res/debug/drawable-v24/ logo_circle_green.png">
- 
+ <img width="200" alt="Icon-60@3x" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/logo_circle_green.png">
 </p>
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+ [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 
 Welcome to the Health Fitness Android App repository! This app is designed to revolutionize your fitness and nutrition journey using cutting-edge AI algorithms, providing personalized fitness plans, nutrition guidance, fitness challenges, and more.
@@ -48,28 +47,49 @@ To install the app, follow these steps:
 ## Screenshots
 
 Login and Register Screens
-![App Screenshots](/Users/nadeen.maree/Pictures/picture1.png)
-Questionnaire Screens
-![App Screenshots](/Users/nadeen.maree/Pictures/picture2.png)
-Main Menu Screen
-![App Screenshots](/Users/nadeen.maree/Pictures/picture3.png)
-Fasting Screens
-![App Screenshots](/Users/nadeen.maree/Pictures/picture4.png)
-Add Food Screen
-![App Screenshots](/Users/nadeen.maree/Pictures/picture5.png)
-Water Tracker Screen
-![App Screenshots](/Users/nadeen.maree/Pictures/picture6.png)
-Training Screens
-![App Screenshots](/Users/nadeen.maree/Pictures/picture7.png)
-Food Screens
-![App Screenshots](/Users/nadeen.maree/Pictures/picture8.png)
-Challenges Screens
-![App Screenshots](/Users/nadeen.maree/Pictures/picture9.png)
-Profile Screen and Edit Profile Screen
-![App Screenshots](/Users/nadeen.maree/Pictures/picture10.png)
-Walk Tracker Screen
-![App Screenshots](/Users/nadeen.maree/Pictures/picture11.png)
 
+<img width="500" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture1.png">
+
+Questionnaire Screens
+
+<img width="300" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture2.png">
+
+Main Menu Screen
+
+<img width="200" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture3.png">
+
+
+Fasting Screens
+
+<img width="300" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture4.png">
+
+Add Food Screen
+
+<img width="200" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture5.png">
+
+Water Tracker Screen
+
+<img width="200" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture6.png">
+
+Training Screens
+
+<img width="400" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture7.png">
+
+Food Screens
+
+<img width="300" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture8.png">
+
+Challenges Screens
+
+<img width="300" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture9.png">
+
+Profile Screen and Edit Profile Screen
+
+<img width="300" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture10.png">
+
+Walk Tracker Screen
+
+<img width="200" alt="Login_and_Register_Screens" src="https://github.com/nadeen-maree/FrontEnd-FinalProject/blob/master/health%20fitness%20screenshots/Picture3.png">
 
 ## Feedback and Support
 
