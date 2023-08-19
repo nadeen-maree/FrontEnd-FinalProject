@@ -1,9 +1,6 @@
 package com.example.finalproject;
 
-<<<<<<< HEAD
 import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
-=======
->>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,8 +21,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import static com.example.finalproject.LoginTabFragment.SHARED_PREFS_KEY;
-
 
 public class Add_Food extends AppCompatActivity {
 
@@ -34,13 +29,7 @@ public class Add_Food extends AppCompatActivity {
     TextView targetText, caloriesMessageTextView;
     EditText breakfastEditText, lunchEditText, dinnerEditText, snackEditText;
     ProgressWheel progressWheel;
-<<<<<<< HEAD
     Button save;
-=======
-
-    SharedPreferences sharedPreferences;
-    private static final String SHARED_PREFS_KEY = "myPrefs";
->>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
     int totalCalories = 0;
     int targetCalories = 0;
     private String apiEmail = "";
@@ -51,13 +40,10 @@ public class Add_Food extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_food);
 
-<<<<<<< HEAD
         SharedPreferences sharedPreferences = Add_Food.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
         String email = sharedPreferences.getString("email", "");
         apiEmail = email.replaceFirst("@","__");
 
-=======
->>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
         personal_plan = findViewById(R.id.tab1_txt);
         food = findViewById(R.id.tab2_txt);
         challenges = findViewById(R.id.tab4_txt);
@@ -220,12 +206,6 @@ public class Add_Food extends AppCompatActivity {
         return intPercentage;
     }
 
-<<<<<<< HEAD
-=======
-    String email = sharedPreferences.getString("email", "");
-    String apiEmail = email.replaceFirst("@","__");
-
->>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
     private class HttpPostTask extends AsyncTask<Void, Void, String> {
 
         @Override

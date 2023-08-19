@@ -24,23 +24,8 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-<<<<<<< HEAD
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-=======
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
->>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -70,15 +55,8 @@ public class Edit_Profile extends AppCompatActivity {
     private Uri selectedImageUri;
     private ApiService apiService;
     private Context context;
-<<<<<<< HEAD
     private SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
-=======
-
-    static String imageUri;
-
-    private SharedPreferences sharedPreferences;
->>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
     private String email, apiEmail;
 
     @Override
@@ -90,10 +68,6 @@ public class Edit_Profile extends AppCompatActivity {
         apiService = ApiService.getInstance(getApplicationContext());
 
         editor = Edit_Profile.this.getSharedPreferences("myPrefs", MODE_PRIVATE).edit();
-        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
-        email = sharedPreferences.getString("email", "");
-        apiEmail = email.replaceFirst("@", "__");
-
         sharedPreferences = context.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
         email = sharedPreferences.getString("email", "");
         apiEmail = email.replaceFirst("@", "__");
@@ -640,20 +614,12 @@ public class Edit_Profile extends AppCompatActivity {
         ArrayList<String> focusZonesArrayList = new ArrayList<>(Arrays.asList(focusZonesArray));
         String physicalLimitations = physicalLimitationsText.getText().toString().trim();
         String[] physicalLimitationsArray = physicalLimitations.split(",");
-<<<<<<< HEAD
         ArrayList<String> physicalLimitationsArrayList = new ArrayList<>(Arrays.asList(physicalLimitationsArray));
         String date = birthDateText.getText().toString().trim();
         String startingWeight = startingWeightText.getText().toString().trim();
         String targetWeight = targetWeightText.getText().toString().trim();
         String height = heightText.getText().toString().trim();
         String imageUri = sharedPreferences.getString("Image", null);
-=======
-        ArrayList<String> physicalLimitationsList = new ArrayList<>(Arrays.asList(physicalLimitationsArray));
-        String startingWeight = startingWeightText.getText().toString();
-        String targetWeight = targetWeightText.getText().toString();
-        String height = heightText.getText().toString();
-        imageUri = prefs.getString("image", null);
->>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
         if (imageUri != null) {
             Glide.with(this).load(Uri.parse(imageUri)).into(profileImage);
         }
@@ -694,7 +660,6 @@ public class Edit_Profile extends AppCompatActivity {
             profileImage.setImageResource(R.drawable.ic_launcher_foreground);
         }
 
-<<<<<<< HEAD
         // Create a JsonObject to hold the questionnaire data
         JsonObject questionnaireData = new JsonObject();
         apiService.submitQuestionnaire(apiEmail, questionnaireData, new ApiService.DataSubmitCallback() {
@@ -725,82 +690,6 @@ public class Edit_Profile extends AppCompatActivity {
                     questionnaireData.addProperty("height", height);
                     sharedPreferences.getString("Image", imageUri);
                     questionnaireData.addProperty("Image", imageUri);
-=======
-        // Create the JSON request body
-        JSONObject profileData  = new JSONObject();
-        try {
-            profileData .put("name", name);
-            profileData .put("date", date);
-            profileData .put("gender", gender);
-            profileData .put("dietType", dietType);
-            profileData .put("fitnessLevel", fitnessLevel);
-            profileData .put("focusZones", focusZonesList);
-            profileData .put("physicalLimitations", physicalLimitationsList);
-            profileData .put("startingWeight", startingWeight);
-            profileData .put("targetWeight", targetWeight);
-            profileData .put("height", height);
-
-
-            JsonObject requestBody = new JsonObject();
-            JsonArray focusZonesArrayList = new JsonArray();
-
-            for (String focusZone : focusZonesList) {
-                focusZonesArrayList.add(focusZone);
-            }
-
-            JsonArray physicalLimitationsArrayList = new JsonArray();
-
-            for (String physicalLimitation : physicalLimitationsList) {
-                physicalLimitationsArrayList.add(physicalLimitation);
-            }
-
-            requestBody.addProperty("name", name);
-            requestBody.addProperty("date", date);
-            requestBody.addProperty("gender", gender);
-            requestBody.addProperty("dietType", dietType);
-            requestBody.addProperty("fitnessLevel", fitnessLevel);
-            requestBody.add("focusZones", focusZonesArrayList);
-            requestBody.add("physicalLimitations", physicalLimitationsArrayList);
-            requestBody.addProperty("startingWeight", startingWeight);
-            requestBody.addProperty("targetWeight", targetWeight);
-            requestBody.addProperty("height", height);
-            requestBody.addProperty("image", imageUri);
-
-            apiService.submitQuestionnaire(apiEmail,requestBody , new ApiService.DataSubmitCallback() {
-                @Override
-                public void onSuccess(ResponseModel response) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("name", name);
-                    bundle.putString("gender", gender);
-                    bundle.putString("dietType", dietType);
-                    bundle.putString("fitnessLevel", fitnessLevel);
-                    //bundle.putString("focusZones", focusZones);
-                    bundle.putStringArrayList("focusZones", focusZonesList);
-                    bundle.putStringArrayList("physicalLimitations", physicalLimitationsList);
-                    //bundle.putString("physicalLimitations", physicalLimitations);
-                    bundle.putString("startingWeight", startingWeight);
-                    bundle.putString("targetWeight", targetWeight);
-                    bundle.putString("height", height);
-                    bundle.putString("imageUri", imageUri);
-                    Intent intent = new Intent(Edit_Profile.this, ProfileActivity.class);
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onError(String errorMessage) {
-                    Toast.makeText(Edit_Profile.this, errorMessage, Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
-                    if (response.isSuccessful()) {
-                        ResponseModel data = response.body();
-                        onSuccess(data);
-                    } else {
-                        String errorMessage = "Error: " + response.code();
-                        onError(errorMessage);
-                    }
->>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
                 }
             }
             @Override
@@ -824,103 +713,4 @@ public class Edit_Profile extends AppCompatActivity {
             }
         });
     }
-<<<<<<< HEAD
-=======
-
-    public static String getImageUri(){
-        return imageUri;
-    }
-
-        // Create an instance of HttpPostTask and execute it
-//        SharedPreferences sharedPreferences = Edit_Profile.this.getSharedPreferences(SHARED_PREFS_KEY, MODE_PRIVATE);
-//        String email = sharedPreferences.getString("email", "");
-//        String url = "http://10.0.2.2:8181/questionnaire?email" + email;
-//        HttpPostTask task = new HttpPostTask(url, requestBody.toString(), new HttpPostTask.OnHttpPostTaskCompleted() {
-//            @Override
-//            public void onHttpPostTaskCompleted(String response) {
-//                // Process the response as needed
-//                // ...
-//                System.out.println("Response: " + response);
-//            }
-//        });
-//        task.execute();
-//
-//        setResult(HttpURLConnection.HTTP_OK, intent);
-//        finish();
-//    }
-
-//    public static class HttpPostTask extends AsyncTask<String, Void, String> {
-//        private final String url;
-//        private final String requestBody;
-//        private final OnHttpPostTaskCompleted listener;
-//
-//        public HttpPostTask(String url, String requestBody, OnHttpPostTaskCompleted listener) {
-//            this.url = url;
-//            this.requestBody = requestBody;
-//            this.listener = listener;
-//        }
-//
-//        @Override
-//        protected String doInBackground(String... params) {
-//            HttpURLConnection urlConnection = null;
-//            BufferedReader reader = null;
-//            try {
-//                // Create the connection
-//                URL url = new URL(this.url);
-//                urlConnection = (HttpURLConnection) url.openConnection();
-//                urlConnection.setRequestMethod("POST");
-//                urlConnection.setDoOutput(true);
-//
-//                // Set the request body
-//                OutputStream outputStream = urlConnection.getOutputStream();
-//                outputStream.write(requestBody.getBytes());
-//                outputStream.flush();
-//                outputStream.close();
-//
-//                // Read the response
-//                int responseCode = urlConnection.getResponseCode();
-//                if (responseCode == HttpURLConnection.HTTP_OK) {
-//                    StringBuilder response = new StringBuilder();
-//                    reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-//                    String line;
-//                    while ((line = reader.readLine()) != null) {
-//                        response.append(line);
-//                    }
-//
-//                    return response.toString();
-//                }
-//
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                if (urlConnection != null) {
-//                    urlConnection.disconnect();
-//                }
-//                if (reader != null) {
-//                    try {
-//                        reader.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(String response) {
-//            super.onPostExecute(response);
-//            if (listener != null) {
-//                listener.onHttpPostTaskCompleted(response);
-//            }
-//        }
-//
-//        public interface OnHttpPostTaskCompleted {
-//            void onHttpPostTaskCompleted(String response);
-//        }
-//
-//    }
-//
-
->>>>>>> 4abad96672427dfefce71a1344d472c8b28634d2
 }
